@@ -8,7 +8,11 @@
 
 \begin{document}
 \input{deckblatt.tex}
+\cleardoublepage
+\pdfbookmark[1]{Inhaltsverzeichnis}{toc}
+\chapter*{Inhaltsverzeichnis}
 \tableofcontents
+\clearpage
 \pagenumbering{arabic}
 
 \chapter{Grundlagen}
@@ -154,7 +158,18 @@ G4-RTR ins Transportnetz & G4-RTR Gi0/1 (oder Fa0/1) & Transport-Segment 172.16.
 \section{Logische Netzzeichnung}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{Work/Aufgaben/NWT/Static-Routes/Static-routing.png}
+\IfFileExists{Work/Aufgaben/NWT/Static-Routes/Static-routing.png}{%
+  \includegraphics[width=\textwidth]{Work/Aufgaben/NWT/Static-Routes/Static-routing.png}%
+}{%
+  \IfFileExists{Static-routing.png}{%
+    \includegraphics[width=\textwidth]{Static-routing.png}%
+  }{%
+    \fbox{\parbox{0.9\textwidth}{%
+      Bilddatei fehlt: \texttt{Static-routing.png}.\\
+      Erwarteter Pfad: \texttt{Work/Aufgaben/NWT/Static-Routes/Static-routing.png}
+    }}%
+  }%
+}
 \caption{Topologie fuer die Static-Routing-Uebung}
 \end{figure}
 
