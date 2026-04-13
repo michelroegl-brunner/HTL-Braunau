@@ -1,3 +1,4 @@
+- [Inhaltsverzeichnis](#inhaltsverzeichnis)
 - [Grundlagen](#grundlagen)
   - [Was ist Static Routing?](#was-ist-static-routing)
   - [Static vs. Dynamic Routing](#static-vs.-dynamic-routing)
@@ -26,6 +27,8 @@
     Routen](#teil-b-transportnetz-und-statische-routen)
   - [Teil C: Funktionsprüfung](#teil-c-funktionsprüfung)
   - [Hilfreiche Cisco-Kommandos](#hilfreiche-cisco-kommandos)
+
+# Inhaltsverzeichnis
 
 # Grundlagen
 
@@ -170,7 +173,7 @@ Transportnetz zwischen den Gruppenroutern:
 ## Logische Netzzeichnung
 
 <figure>
-<img src="Static-routing.png" />
+
 <figcaption>Topologie fuer die Static-Routing-Uebung</figcaption>
 </figure>
 
