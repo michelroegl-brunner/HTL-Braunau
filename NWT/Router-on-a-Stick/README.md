@@ -1,4 +1,3 @@
-- [Inhaltsverzeichnis](#inhaltsverzeichnis)
 - [Grundlagen](#grundlagen)
   - [Was ist Router-on-a-Stick?](#was-ist-router-on-a-stick)
   - [VLANs, Trunking und 802.1Q](#vlans-trunking-und-802.1q)
@@ -18,8 +17,6 @@
   - [Kontrollbefehle](#kontrollbefehle)
 - [Netzzeichnung](#netzzeichnung)
   - [Logische Darstellung mit IPs](#logische-darstellung-mit-ips)
-
-# Inhaltsverzeichnis
 
 # Grundlagen
 
