@@ -25,11 +25,11 @@ Repo: [HTL-Braunau](https://github.com/michelroegl-brunner/HTL-Braunau)
 
 Alternativ direkt mit Raw-Link:
 
-`https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>`
+[Raw-Link-Muster](https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>)
 
 ### Ganzen Ordner herunterladen
 
 1. Repo als ZIP herunterladen:  
-   `https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip`
+   [Repo als ZIP herunterladen](https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip)
 2. ZIP entpacken.
 3. Zum Ordner `BEISPIELDATEIN` wechseln.
