@@ -147,6 +147,46 @@ Fuer Dokumentation und Hilfe stehen drei Werkzeuge bereit:
 
 Administrationsaufgaben werden mit erhoehten Rechten ausgefuehrt. Dazu dienen je nach System \texttt{su} oder \texttt{sudo}. Im Alltag sollte weiterhin mit normalen Benutzerrechten gearbeitet werden.
 
+\chapter{Debian mit WSL unter Windows einrichten}
+\section{Voraussetzung}
+Diese Anleitung gilt fuer einen Windows-PC mit PowerShell. 
+
+\section{Installation von WSL mit Debian}
+\begin{enumerate}
+\item Oeffne \textbf{PowerShell als Administrator}.
+\item Fuehre folgenden Befehl aus:
+\begin{itemize}
+\item \texttt{wsl --install -d debian}
+\end{itemize}
+\item Starte den PC neu, falls Windows dazu auffordert.
+\item Starte danach \textbf{Debian} mit \texttt{wsl} in PowerShell.
+\end{enumerate}
+
+\section{Erster Start und Benutzer}
+Bei der installation richtet sich Debian ein und fragt nach einem Linux-Benutzer.
+\begin{itemize}
+\item Waehle als Benutzername bitte deinen \textbf{Vornamen}.
+\item Vergib ein Passwort und merke es dir gut.
+\end{itemize}
+
+Wichtig bei der Passworteingabe in Linux:
+\begin{itemize}
+\item Es werden \textbf{keine Zeichen} angezeigt.
+\item Es erscheinen auch \textbf{keine Sternchen}.
+\item Die Eingabe funktioniert trotzdem normal. Nach dem Tippen einfach mit ENTER bestaetigen.
+\end{itemize}
+
+\section{Kurzer Funktionstest}
+Nach erfolgreicher Einrichtung kannst du in Debian zum Test folgende Befehle ausfuehren:
+\begin{itemize}
+\item \texttt{whoami}
+\item \texttt{pwd}
+\item \texttt{ls}
+\end{itemize}
+Wenn diese Befehle funktionieren, ist dein Debian-System unter WSL betriebsbereit.
+
+Vergiss nicht in dein Home-Verzeichniss zu wechslen. \texttt{cd ~}
+
 \chapter{Aufgaben zur Linux-Shell}
 \begin{enumerate}
 \item Lege in deinem Home-Verzeichnis ein Verzeichnis mit dem Namen \texttt{COPR} an.
@@ -269,5 +309,15 @@ Pruefe, ob das Skript mit Root-Rechten laeuft, und unterstuetze das Hinzufuegen 
 \textit{Beispiel Ausgabe:} \texttt{Benutzer max wurde erfolgreich angelegt.}\\
 \textit{Erweiterung:} Passwort automatisch generieren und Benutzer einer Gruppe zuordnen.
 \end{enumerate}
+
+
+
+\chapter{Abgabe}
+Die Ausarbeitung ist als \textbf{PDF-Datei} abzugeben.
+
+Pro Aufgabe ist ein Screenshot der Ausgabe des Befehls zu machen.
+Neu verwendete Befehle sind in kurzen Stichworten zu beschreiben.
+
+Bitte lade deine fertige PDF in die entsprechende \textbf{Teams-Aufgabe} hoch.
 
 \end{document}

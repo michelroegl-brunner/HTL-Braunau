@@ -1,3 +1,0 @@
-# Task
-
-Explain VLAN trunking.
