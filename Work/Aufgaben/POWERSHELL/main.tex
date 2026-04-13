@@ -1,0 +1,228 @@
+\documentclass[11pt, oneside, numbers=noenddot]{scrbook}
+
+\usepackage{style}
+
+\def\Title{PowerShell}
+\def\Subtitle{Grundlagen und Aufgaben}
+
+\begin{document}
+\input{deckblatt.tex}
+\tableofcontents
+\pagenumbering{arabic}
+
+\chapter{Grundlagen}
+
+\section{Was ist PowerShell?}
+PowerShell ist eine Kommandozeile und Skriptsprache von Microsoft zur Verwaltung von Windows-Systemen. Im Unterschied zu klassischen Shells arbeitet PowerShell objektbasiert: Befehle geben nicht nur Text aus, sondern .NET-Objekte mit Eigenschaften und Methoden.
+
+Dadurch lassen sich Ergebnisse gezielt filtern, sortieren und weiterverarbeiten. Viele Verwaltungsaufgaben wie Prozess-, Service- oder Dateiverwaltung sind damit strukturiert und gut automatisierbar.
+
+\section{Cmdlets und Namensschema}
+Die meisten PowerShell-Befehle heissen \textbf{Cmdlets} und folgen dem Schema \texttt{Verb-Noun}, zum Beispiel:
+\begin{itemize}
+\item \texttt{Get-Process}
+\item \texttt{Get-Service}
+\item \texttt{Sort-Object}
+\item \texttt{Export-Csv}
+\end{itemize}
+
+Dieses einheitliche Schema erleichtert das Lernen, weil ähnliche Aufgaben immer nach dem gleichen Muster gelöst werden.
+
+\section{Hilfe und Dokumentation}
+Für neue Befehle ist die integrierte Hilfe besonders wichtig:
+\begin{itemize}
+\item \texttt{Get-Help <Befehl>}: zeigt die Hilfe zum Befehl
+\item \texttt{Get-Help <Befehl> -Examples}: zeigt nur Beispiele
+\item \texttt{Get-Command}: listet verfügbare Befehle auf
+\end{itemize}
+
+Mit diesen Befehlen können unbekannte Cmdlets schnell verstanden und korrekt verwendet werden.
+
+\section{Pipeline und Objekte}
+Mit der Pipeline \texttt{|} wird die Ausgabe eines Befehls an den nächsten weitergegeben. In PowerShell werden dabei Objekte statt reiner Textzeilen übergeben.
+
+Beispiel:
+\begin{itemize}
+\item \texttt{Get-Process | Sort-Object CPU -Descending | Select-Object -First 10}
+\end{itemize}
+
+Hier werden Prozesse geladen, nach CPU-Zeit sortiert und auf die ersten 10 Einträge begrenzt.
+
+\chapter{Kernbefehle in der Praxis}
+
+\section{Dateien und Verzeichnisse}
+Wichtige Befehle für den Dateisystemzugriff sind:
+\begin{itemize}
+\item \texttt{Get-ChildItem}: listet Dateien und Ordner auf
+\item \texttt{New-Item}: erstellt Dateien oder Verzeichnisse
+\item \texttt{Copy-Item}: kopiert Dateien oder Ordner
+\item \texttt{Get-Content}: liest Dateiinhalt
+\item \texttt{Set-Content}: schreibt Inhalt in Dateien
+\end{itemize}
+
+\section{Prozesse und Services}
+Für laufende Prozesse und Windows-Dienste sind folgende Cmdlets zentral:
+\begin{itemize}
+\item \texttt{Get-Process}: Prozesse anzeigen
+\item \texttt{Stop-Process}: Prozess beenden
+\item \texttt{Get-Service}: Services anzeigen
+\item \texttt{Start-Service} und \texttt{Stop-Service}: Service starten oder stoppen
+\end{itemize}
+
+\section{Ausgabe, Variablen und Export}
+PowerShell unterstützt verschiedene Ausgabeformen:
+\begin{itemize}
+\item Variablen: \texttt{\$P = ...}
+\item Textausgabe in Datei: \texttt{Out-File}
+\item CSV-Export: \texttt{Export-Csv}
+\item XML-Export: \texttt{Export-Clixml}
+\item HTML-Ausgabe: \texttt{ConvertTo-Html}
+\end{itemize}
+
+Diese Techniken sind wichtig, um Ergebnisse zu dokumentieren und in anderen Programmen weiterzuverwenden.
+
+\chapter{Aufgabenserie 1: Prozesse und Services}
+\begin{enumerate}
+\item Erstelle eine Liste aller Prozesse, absteigend nach CPU-Nutzung sortiert.
+\item Erzeuge eine Liste der Top-10-Prozesse basierend auf der CPU-Zeit.
+\item Weise der Variable \texttt{\$P} die Ausgabe aus Aufgabe 2 zu.
+\item Speichere den Inhalt von \texttt{\$P} in der Datei \texttt{A4.txt}. Exportiere den Inhalt von \texttt{\$P} zusätzlich in eine CSV-Datei und in eine XML-Datei.
+\item Erzeuge eine Liste aller Services und sortiere diese nach der Eigenschaft \texttt{Status}.
+\item Erzeuge eine Liste aller Services und gib nur die Eigenschaften \texttt{Name} und \texttt{Status} in roter Schrift aus.
+\item Erzeuge eine Liste aller Services und färbe die Ausgabe per \texttt{if}-Abfrage:
+\begin{itemize}
+\item Rot bei \texttt{Stopped}/gestoppt
+\item Grün bei \texttt{Running}/gestartet
+\end{itemize}
+\item Konvertiere die Ausgabe von \texttt{Get-Service} in HTML.
+\end{enumerate}
+
+\section{Hinweise zu typischen Lösungswegen}
+Folgende Befehle sind für diese Aufgaben besonders nützlich:
+\begin{itemize}
+\item \texttt{Get-Process | Sort-Object CPU -Descending}
+\item \texttt{Select-Object -First 10}
+\item \texttt{Out-File A4.txt}
+\item \texttt{Export-Csv .\textbackslash A4.csv -NoTypeInformation}
+\item \texttt{Export-Clixml .\textbackslash A4.xml}
+\item \texttt{Get-Service | Sort-Object Status}
+\item \texttt{Write-Host ... -ForegroundColor Red/Green}
+\item \texttt{Get-Service | ConvertTo-Html | Out-File services.html}
+\end{itemize}
+
+\chapter{Aufgabenserie 2: Dateien, Skripte und Daten}
+\begin{enumerate}
+\item \textbf{Dateien auflisten}\\
+Schreibe ein Skript, das alle Dateien im Verzeichnis \texttt{C:\textbackslash Windows\textbackslash System32} auflistet und Dateigrösse sowie Erstellungsdatum anzeigt.
+
+\item \textbf{Verzeichnis erstellen}\\
+Entwickle ein Skript, das unter \texttt{C:\textbackslash Temp\textbackslash} ein neues Verzeichnis erstellt, falls es noch nicht existiert. Der Verzeichnisname soll auf aktuellem Datum und Uhrzeit basieren.
+
+\item \textbf{Textdatei erstellen und schreiben}\\
+Erstelle eine Textdatei und speichere darin eine benutzerdefinierte Nachricht.
+
+\item \textbf{Inhalt einer Datei lesen}\\
+Lies den Inhalt einer bestehenden Textdatei und gib ihn in der Konsole aus.
+
+\item \textbf{Dateien kopieren}\\
+Kopiere alle \texttt{.txt}-Dateien von einem Quellverzeichnis in ein Zielverzeichnis.
+
+\item \textbf{Systeminformationen abrufen}\\
+Zeige grundlegende Systeminformationen an, z.\,B.\ Computername, Betriebssystem und installierte RAM-Grösse.
+
+\item \textbf{Benutzerdefinierte Funktion erstellen}\\
+Schreibe eine Funktion, die zwei Zahlen als Eingabe erhält und deren Summe zurückgibt. Rufe diese Funktion in einem Skript auf.
+
+\item \textbf{CSV-Datei verarbeiten}\\
+Erstelle eine CSV-Datei mit Dummy-Daten im Format \texttt{Vorname;Nachname;Geburtsdatum} (mindestens 5 Einträge). Lies die CSV ein und gib die Benutzer nach Alter sortiert aus.
+\end{enumerate}
+
+\section{Empfohlene Cmdlets für Serie 2}
+\begin{itemize}
+\item \texttt{Get-ChildItem}
+\item \texttt{New-Item -ItemType Directory}
+\item \texttt{Test-Path}
+\item \texttt{Set-Content} und \texttt{Get-Content}
+\item \texttt{Copy-Item}
+\item \texttt{Get-ComputerInfo}
+\item \texttt{Import-Csv}
+\item \texttt{Sort-Object}
+\end{itemize}
+
+\chapter{Aufgabenserie 3: Fortgeschrittene Automatisierung}
+\begin{enumerate}
+\item \textbf{Log-Analyse mit Fehlerbericht}\\
+Erstelle ein Skript, das eine Logdatei einliest und die Vorkommen von \texttt{ERROR}, \texttt{WARNING} und \texttt{INFO} zählt. Speichere das Ergebnis zusätzlich als CSV-Bericht mit Zeitstempel.\\
+\textit{Input-Datei:} \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-Log-Analyse/app.log}\\
+\textit{Direktlink:} \texttt{https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-Log-Analyse/app.log}
+
+\item \textbf{Service-Monitor mit Protokollierung}\\
+Überwache eine definierte Liste kritischer Dienste (z.\,B.\ \texttt{Spooler}, \texttt{wuauserv}, \texttt{BITS}). Prüfe den Status und schreibe für jeden Dienst eine Zeile in eine Logdatei. Wenn ein Dienst gestoppt ist, soll dies deutlich markiert werden.
+
+\item \textbf{Geplantes Backup mit Rotation}\\
+Sichere ein Quellverzeichnis in ein Zielverzeichnis mit Zeitstempel im Ordnernamen. Behalte nur die letzten 5 Backups und lösche ältere Sicherungen automatisch.
+
+\item \textbf{Datei-Integrity-Check}\\
+Erstelle Prüfsummen (\texttt{SHA256}) für alle Dateien in einem Verzeichnis und speichere diese in einer Referenzdatei. Schreibe ein zweites Skript, das bei einem späteren Lauf Änderungen erkennt (neu, gelöscht, verändert) und übersichtlich ausgibt.
+
+\item \textbf{Parameterisiertes Admin-Skript}\\
+Entwickle ein Skript mit Parametern \texttt{-Mode}, \texttt{-Path} und \texttt{-WhatIf}. Je nach Modus soll das Skript Dateien auflisten, archivieren oder löschen. Ungültige Parameter müssen mit einer verständlichen Fehlermeldung abgefangen werden.
+
+\item \textbf{WMI/CIM-Inventarisierung mehrerer Rechner}\\
+Lies Rechnernamen aus einer Textdatei ein und sammle pro Rechner Systemdaten (OS, RAM, CPU, letzter Boot-Zeitpunkt) mit CIM. Erstelle daraus einen Gesamtbericht als CSV und als HTML-Tabelle.\\
+\textit{Input-Datei:} \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-CIM/rechnerliste.txt}\\
+\textit{Direktlink:} \texttt{https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-CIM/rechnerliste.txt}
+\end{enumerate}
+
+\section{Zusatzanforderungen für Serie 3}
+\begin{itemize}
+\item Verwende in jedem Skript \texttt{try/catch} für Fehlerbehandlung.
+\item Nutze \texttt{param(...)} und sinnvolle Standardwerte.
+\item Gib am Ende einen klaren Erfolgs- oder Fehlerstatus aus (\texttt{exit 0}/\texttt{exit 1}).
+\item Trenne Logik in wiederverwendbare Funktionen.
+\end{itemize}
+
+\section{Empfohlene Cmdlets für Serie 3}
+\begin{itemize}
+\item \texttt{Get-Content}, \texttt{Select-String}, \texttt{Group-Object}
+\item \texttt{Get-Service}, \texttt{Start-Service}, \texttt{Out-File}
+\item \texttt{Copy-Item}, \texttt{Remove-Item}, \texttt{Get-ChildItem}
+\item \texttt{Get-FileHash}, \texttt{Compare-Object}
+\item \texttt{Get-CimInstance}, \texttt{Invoke-Command}
+\item \texttt{Export-Csv}, \texttt{ConvertTo-Html}
+\end{itemize}
+
+\chapter{Beispieldateien und Download}
+Wenn für eine Aufgabe Beispieldateien benötigt werden, liegen diese im Repository unter:
+\begin{itemize}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/<AUFGABE>/...}
+\item \texttt{BEISPIELDATEIN/LINUX/<AUFGABE>/...}
+\end{itemize}
+
+Beispiele für diese Ausarbeitung:
+\begin{itemize}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-1/services.txt}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-2/A4.txt}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-2/A4.csv}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-3/benutzer.csv}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-Log-Analyse/app.log}
+\item \texttt{BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-CIM/rechnerliste.txt}
+\end{itemize}
+
+Download direkt über GitHub:
+\begin{itemize}
+\item Einzeldatei: Datei öffnen, \texttt{Raw} klicken, danach speichern.
+\item Ganze Sammlung: \texttt{https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip}
+\item Raw-Schema: \texttt{https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>}
+\end{itemize}
+
+\chapter{Abgabe}
+Die Ausarbeitung ist als \textbf{PDF-Datei} abzugeben.
+
+Zu jeder Aufgabe ist ein Screenshot der Ausführung (Befehl und Ausgabe) zu dokumentieren.
+
+Neu verwendete Cmdlets sollen in kurzen Stichworten erklärt werden.
+
+Bitte lade deine fertige PDF in die entsprechende \textbf{Teams-Aufgabe} hoch.
+
+\end{document}

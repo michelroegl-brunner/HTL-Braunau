@@ -1,0 +1,5 @@
+Name        CPU
+----        ---
+Code        452.98
+explorer    122.47
+pwsh         98.11

@@ -1,0 +1,10 @@
+2026-04-01 08:00:12 INFO Application start
+2026-04-01 08:00:15 INFO Loading configuration
+2026-04-01 08:00:18 WARNING Config key cache.ttl missing, using default
+2026-04-01 08:01:03 INFO User login attempt: anna
+2026-04-01 08:01:04 ERROR Authentication failed for user anna
+2026-04-01 08:01:32 INFO User login attempt: lukas
+2026-04-01 08:01:33 INFO Authentication successful for user lukas
+2026-04-01 08:02:10 WARNING Disk space below 15 percent
+2026-04-01 08:02:59 ERROR Database timeout on query getOrders
+2026-04-01 08:03:05 INFO Retry query getOrders successful

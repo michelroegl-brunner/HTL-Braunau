@@ -1,0 +1,10 @@
+2026-04-01 09:10:02 INFO Service monitor started
+2026-04-01 09:10:04 INFO Checking services: Spooler,wuauserv,BITS
+2026-04-01 09:10:05 WARNING Service wuauserv is currently stopped
+2026-04-01 09:10:06 INFO Attempting restart of wuauserv
+2026-04-01 09:10:08 ERROR Restart failed for wuauserv with exit code 1068
+2026-04-01 09:10:15 INFO Service BITS is running
+2026-04-01 09:10:20 INFO Writing status report
+2026-04-01 09:10:25 WARNING Report directory did not exist and was created
+2026-04-01 09:10:31 INFO Report successfully written
+2026-04-01 09:10:33 ERROR Could not notify remote endpoint api/sync

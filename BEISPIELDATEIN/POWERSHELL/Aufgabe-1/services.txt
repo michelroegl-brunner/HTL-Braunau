@@ -1,0 +1,4 @@
+Spooler Running
+wuauserv Stopped
+BITS Running
+LanmanServer Running
