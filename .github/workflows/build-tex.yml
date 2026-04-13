@@ -89,6 +89,8 @@ jobs:
         run: |
           set -euo pipefail
           tex_config="$GITHUB_WORKSPACE/Work/Aufgaben/latexmkrc"
+          outputs_file="$RUNNER_TEMP/generated_outputs.txt"
+          : > "$outputs_file"
           has_tex_config=false
           if [[ -f "$tex_config" ]]; then
             has_tex_config=true
@@ -115,20 +117,34 @@ jobs:
                 latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
               fi
             )
-            cp "$source_dir/main.pdf" "$out_dir/$last_folder.pdf"
+            pdf_out="$out_dir/$last_folder.pdf"
+            md_out="$out_dir/main.md"
+            cp "$source_dir/main.pdf" "$pdf_out"
 
             (
               cd "$source_dir"
-              pandoc main.tex -o "$GITHUB_WORKSPACE/$out_dir/main.md"
+              pandoc main.tex \
+                --resource-path="$source_dir:$GITHUB_WORKSPACE/Work/Templates/Styling:$GITHUB_WORKSPACE/Work/templates/Styling" \
+                -o "$GITHUB_WORKSPACE/$md_out"
             )
+            echo "$pdf_out" >> "$outputs_file"
+            echo "$md_out" >> "$outputs_file"
           done <<< "${{ steps.targets.outputs.targets }}"
 
       - name: Commit generated outputs
         shell: bash
         run: |
           set -euo pipefail
+          outputs_file="$RUNNER_TEMP/generated_outputs.txt"
 
-          if [[ -z "$(git status --porcelain)" ]]; then
+          if [[ -f "$outputs_file" ]]; then
+            while IFS= read -r output_path; do
+              [[ -z "$output_path" ]] && continue
+              git add -f "$output_path"
+            done < "$outputs_file"
+          fi
+
+          if git diff --cached --quiet --exit-code; then
             echo "No generated output changes to commit."
             exit 0
           fi
