@@ -1,6 +1,7 @@
 *
 !*/
 !*.tex
+!**/*.png
 !**/latexmkrc
 !Work/Templates/**
 !.github/**

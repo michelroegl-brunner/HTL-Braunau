@@ -7,15 +7,158 @@
 
 
 \begin{document}
-
-\pagenumbering{roman}	
-		
 \input{deckblatt.tex}
-
-
+\tableofcontents
+\pagenumbering{arabic}
 
 \chapter{Grundlagen}
-\section{VLAN Trunking}
-\section{VLAN Trunking}
+\section{Was ist Router-on-a-Stick?}
+Router-on-a-Stick ist ein Inter-VLAN-Routing-Verfahren, bei dem ein Router mit nur einem physischen Interface mehrere VLANs routet. Statt vieler einzelner physischer Links wird ein gemeinsamer Trunk zwischen Switch und Router verwendet.
+
+Der Router nutzt dafuer Subinterfaces (z.\,B.\ \texttt{Gi0/0.10} oder \texttt{Fa0/0.10}). Jedes Subinterface ist genau einem VLAN zugeordnet und erhaelt die Gateway-IP fuer dieses VLAN.
+
+\section{VLANs, Trunking und 802.1Q}
+VLANs trennen ein Layer-2-Netz logisch in mehrere Broadcast-Domaenen. Damit Frames verschiedener VLANs ueber eine gemeinsame Leitung uebertragen werden koennen, wird IEEE 802.1Q Tagging verwendet.
+
+Zwischen Switch und Router wird ein Trunk-Port konfiguriert. Der Switch taggt die Frames je VLAN, und der Router ordnet sie ueber \texttt{encapsulation dot1Q <VLAN-ID>} den passenden Subinterfaces zu.
+
+\section{Rolle des Default Gateways}
+Endgeraete in einem VLAN senden Verkehr zu anderen Netzen an ihr Default Gateway. In dieser Uebung ist das Gateway pro VLAN jeweils die Adresse \texttt{.254} auf dem zugehoerigen Router-Subinterface.
+
+\section{Was macht ein Subinterface am Router?}
+Ein Subinterface ist ein \textbf{virtuelles Interface} auf einem physischen Router-Port. Dadurch kann ein einzelner Port (z.\,B.\ \texttt{Gi0/0} oder \texttt{Fa0/0}) mehrere logisch getrennte VLAN-Netze bedienen.
+
+Jedes Subinterface bekommt:
+\begin{itemize}
+\item eine VLAN-Zuordnung via \texttt{encapsulation dot1Q <VLAN-ID>}
+\item eine eigene IP-Adresse als Default Gateway des VLANs
+\end{itemize}
+
+Beispiel:
+\begin{verbatim}
+interface gi0/0.10 (oder fa0/0.10)
+ encapsulation dot1Q 10
+ ip address 10.10.10.254 255.255.255.0
+
+interface gi0/0.20 (oder fa0/0.20)
+ encapsulation dot1Q 20
+ ip address 10.10.20.254 255.255.255.0
+\end{verbatim}
+Ohne Subinterfaces koennte der Router die VLAN-Tags am Trunk nicht sauber den jeweiligen Netzen zuordnen.
+
+\chapter{Topologie}
+\section{Standardaufbau pro Gruppe}
+Jede Gruppe arbeitet mit derselben Standard-Topologie:
+\begin{itemize}
+\item 1x Cisco 3550 Switch
+\item 1x Cisco 2800 Series Router
+\item 2 VLANs (VLAN 10 und VLAN 20)
+\item 1 PC pro VLAN
+\end{itemize}
+
+Adressregel:
+\begin{itemize}
+\item PC: \texttt{.1}
+\item Switch-SVI: \texttt{.253}
+\item Router-Subinterface (Gateway): \texttt{.254}
+\end{itemize}
+
+\chapter{IP-Plan}
+\section{Adressierungstabelle}
+\begin{longtable}{|l|l|l|l|l|l|}
+\hline
+Geraet & Interface & VLAN & IP-Adresse & Maske & Default Gateway \\
+\hline
+PC-VLAN10 & NIC & 10 & 10.10.10.1 & 255.255.255.0 & 10.10.10.254 \\
+\hline
+PC-VLAN20 & NIC & 20 & 10.10.20.1 & 255.255.255.0 & 10.10.20.254 \\
+\hline
+SW-3550 & VLAN 10 (SVI) & 10 & 10.10.10.253 & 255.255.255.0 & 10.10.10.254 \\
+\hline
+SW-3550 & VLAN 20 (SVI) & 20 & 10.10.20.253 & 255.255.255.0 & 10.10.20.254 \\
+\hline
+RTR-2800 & Gi0/0.10 (oder Fa0/0.10) & 10 & 10.10.10.254 & 255.255.255.0 & - \\
+\hline
+RTR-2800 & Gi0/0.20 (oder Fa0/0.20) & 20 & 10.10.20.254 & 255.255.255.0 & - \\
+\hline
+\end{longtable}
+
+\section{Interface-Belegung (Verkabelung)}
+\begin{longtable}{|l|l|l|}
+\hline
+Verbindung & Linke Seite & Rechte Seite \\
+\hline
+PC-VLAN10 zu Switch & PC-VLAN10 NIC & SW-3550 Fa0/1 \\
+\hline
+PC-VLAN20 zu Switch & PC-VLAN20 NIC & SW-3550 Fa0/2 \\
+\hline
+Switch zu Router (Trunk) & SW-3550 Fa0/24 & RTR-2800 Gi0/0 (oder Fa0/0) \\
+\hline
+\end{longtable}
+
+\chapter{Aufgabe: Router-on-a-Stick}
+\section{Teil A: Switch konfigurieren}
+\begin{enumerate}
+\item VLAN 10 und VLAN 20 auf dem Switch anlegen.
+\item Einen Access-Port fuer PC-VLAN10 auf VLAN 10 konfigurieren.
+\item Einen Access-Port fuer PC-VLAN20 auf VLAN 20 konfigurieren.
+\item Den Uplink zum Router als Trunk konfigurieren.
+\item Optional: SVI-Adressen fuer VLAN 10 und VLAN 20 gemaess Tabelle setzen.
+\end{enumerate}
+
+\section{Teil B: Router konfigurieren}
+\begin{enumerate}
+\item Physisches Interface \texttt{Gi0/0} (oder \texttt{Fa0/0}) aktivieren.
+\item Subinterface \texttt{Gi0/0.10} (oder \texttt{Fa0/0.10}) erstellen:
+\begin{itemize}
+\item \texttt{encapsulation dot1Q 10}
+\item IP-Adresse \texttt{10.10.10.254/24}
+\end{itemize}
+\item Subinterface \texttt{Gi0/0.20} (oder \texttt{Fa0/0.20}) erstellen:
+\begin{itemize}
+\item \texttt{encapsulation dot1Q 20}
+\item IP-Adresse \texttt{10.10.20.254/24}
+\end{itemize}
+\end{enumerate}
+
+\section{Teil C: Endgeraete konfigurieren und testen}
+\begin{enumerate}
+\item IP-Adresse und Gateway auf beiden PCs gemaess Tabelle eintragen.
+\item Pruefen:
+\begin{itemize}
+\item PC-VLAN10 pingt \texttt{10.10.10.254}
+\item PC-VLAN20 pingt \texttt{10.10.20.254}
+\item PC-VLAN10 pingt PC-VLAN20
+\item PC-VLAN20 pingt PC-VLAN10
+\end{itemize}
+\item Wenn ein Ping fehlschlaegt: VLAN-Zuordnung, Trunk, Subinterfaces und Gateways kontrollieren.
+\end{enumerate}
+
+\section{Kontrollbefehle}
+\begin{verbatim}
+show vlan brief
+show interfaces trunk
+show ip interface brief
+show running-config
+ping <ziel-ip>
+\end{verbatim}
+
+\chapter{Netzzeichnung}
+\section{Logische Darstellung mit IPs}
+\begin{verbatim}
+PC-VLAN10 (10.10.10.1/24, GW 10.10.10.254) -- Access VLAN 10 --+
+                                                                |
+                                                             SW-3550
+                                                     SVI10: 10.10.10.253
+                                                     SVI20: 10.10.20.253
+                                                                |
+                                                          802.1Q Trunk
+                                                                |
+                                                        RTR-2800 Gi0/0 (oder Fa0/0)
+                                                   Gi0/0.10 (oder Fa0/0.10): 10.10.10.254
+                                                   Gi0/0.20 (oder Fa0/0.20): 10.10.20.254
+                                                                |
+PC-VLAN20 (10.10.20.1/24, GW 10.10.20.254) -- Access VLAN 20 --+
+\end{verbatim}
  
 \end{document}
