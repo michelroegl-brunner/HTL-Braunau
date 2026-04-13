@@ -503,8 +503,8 @@ Rechteprüfung bei Admin-Aufgaben).
     Log-Level aus.  
     *Input-Datei:*
     `BEISPIELDATEIN/LINUX/Aufgabe-Logfile-Analyzer/app.log`  
-    *Direktlink:*
-    `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/LINUX/Aufgabe-Logfile-Analyzer/app.log`
+    *Direktlink:* [Raw-Download
+    app.log](https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/LINUX/Aufgabe-Logfile-Analyzer/app.log)
 
 5.  **Shell-Skript zum Bewegen von Dateien (`mvprot.sh`)**  
     Entwickle ein Skript, das im aktüllen Verzeichnis alle Dateien einer
@@ -554,11 +554,11 @@ Download direkt ueber GitHub:
 
 - Einzeldatei: Datei oeffnen, `Raw` klicken, danach speichern.
 
-- Ganze Sammlung:
-  `https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip`
+- Ganze Sammlung: [Repo als ZIP
+  herunterladen](https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip)
 
 - Raw-Schema:
-  `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>`
+  [Raw-Link-Muster](https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>)
 
 # Abgabe
 

@@ -231,8 +231,8 @@ Folgende Befehle sind für diese Aufgaben besonders nützlich:
     zusätzlich als CSV-Bericht mit Zeitstempel.  
     *Input-Datei:*
     `BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-Log-Analyse/app.log`  
-    *Direktlink:*
-    `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-Log-Analyse/app.log`
+    *Direktlink:* [Raw-Download
+    app.log](https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-Log-Analyse/app.log)
 
 2.  **Service-Monitor mit Protokollierung**  
     Überwache eine definierte Liste kritischer Dienste (z. B. `Spooler`,
@@ -263,8 +263,8 @@ Folgende Befehle sind für diese Aufgaben besonders nützlich:
     daraus einen Gesamtbericht als CSV und als HTML-Tabelle.  
     *Input-Datei:*
     `BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-CIM/rechnerliste.txt`  
-    *Direktlink:*
-    `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-CIM/rechnerliste.txt`
+    *Direktlink:* [Raw-Download
+    rechnerliste.txt](https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/POWERSHELL/Aufgabe-Serie-3-CIM/rechnerliste.txt)
 
 ## Zusatzanforderungen für Serie 3
 
@@ -318,11 +318,11 @@ Download direkt ueber GitHub:
 
 - Einzeldatei: Datei oeffnen, `Raw` klicken, danach speichern.
 
-- Ganze Sammlung:
-  `https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip`
+- Ganze Sammlung: [Repo als ZIP
+  herunterladen](https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip)
 
 - Raw-Schema:
-  `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>`
+  [Raw-Link-Muster](https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>)
 
 # Abgabe
 
