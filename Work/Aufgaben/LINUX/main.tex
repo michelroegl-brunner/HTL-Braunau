@@ -298,18 +298,23 @@ Analysiere eine Logdatei und zaehle, wie oft \texttt{ERROR}, \texttt{WARNING} un
 \textit{Beispiel Eingabe:} \texttt{./log\_analyzer.sh app.log}\\
 \textit{Beispiel Ausgabe:} \texttt{ERROR: 4, WARNING: 7, INFO: 21}\\
 \textit{Erweiterung:} Werte optional nur einen per Parameter gewaehlten Log-Level aus.
+
+\item \textbf{Shell-Skript zum Bewegen von Dateien (\texttt{mvprot.sh})}\\
+Entwickle ein Skript, das im aktuellen Verzeichnis alle Dateien einer angegebenen Endung in ein neu erstelltes Unterverzeichnis verschiebt. Das Skript besitzt drei Parameter: Dateiendung, Name des Unterverzeichnisses und ein Flag, ob ein Protokoll erstellt werden soll. Bei aktivem Protokoll sollen Anzahl und Namen der verschobenen Dateien in eine Protokolldatei im Quellverzeichnis geschrieben werden.\\
+\textit{Beispiel Eingabe:} \texttt{./mvprot.sh txt archiv ja}\\
+\textit{Beispiel Ausgabe:} \texttt{5 Dateien nach ./archiv verschoben. Protokoll: ./mvprot.log}\\
+\textit{Hinweis:} Die Anzahl kann z.\,B.\ ueber Kommandosubstitution ermittelt werden, etwa mit \texttt{AnzahlDateien=\$(ls *.txt | wc -w)}.
 \end{enumerate}
 
 \section{Schwer}
 \begin{enumerate}
-\setcounter{enumi}{4}
+\setcounter{enumi}{5}
 \item \textbf{Benutzer-Management-Skript (\texttt{user\_manager.sh})}\\
 Pruefe, ob das Skript mit Root-Rechten laeuft, und unterstuetze das Hinzufuegen sowie Loeschen von Benutzern (\texttt{add}/\texttt{delete}). Pruefe dabei auch, ob ein Benutzer bereits existiert.\\
 \textit{Beispiel Eingabe:} \texttt{sudo ./user\_manager.sh add max}\\
 \textit{Beispiel Ausgabe:} \texttt{Benutzer max wurde erfolgreich angelegt.}\\
 \textit{Erweiterung:} Passwort automatisch generieren und Benutzer einer Gruppe zuordnen.
 \end{enumerate}
-
 
 
 \chapter{Abgabe}

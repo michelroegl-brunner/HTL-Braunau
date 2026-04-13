@@ -1,0 +1,121 @@
+name: Build TeX Outputs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Work/Aufgaben/**/*.tex"
+      - "Work/Templates/**"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install TeX and Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y latexmk texlive-latex-extra pandoc
+
+      - name: Detect TeX targets
+        id: targets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          before_sha="${{ github.event.before }}"
+          after_sha="${{ github.sha }}"
+          all_zero="0000000000000000000000000000000000000000"
+
+          if [[ "$before_sha" == "$all_zero" ]]; then
+            mapfile -t changed_files < <(git ls-files)
+          else
+            mapfile -t changed_files < <(git diff --name-only "$before_sha" "$after_sha")
+          fi
+
+          rebuild_all=false
+          for file in "${changed_files[@]}"; do
+            if [[ "$file" == Work/templates/* || "$file" == Work/Templates/* ]]; then
+              rebuild_all=true
+              break
+            fi
+          done
+
+          declare -A targets=()
+
+          if [[ "$rebuild_all" == true ]]; then
+            while IFS= read -r tex_file; do
+              targets["$tex_file"]=1
+            done < <(git ls-files "Work/Aufgaben/**/main.tex")
+          else
+            for file in "${changed_files[@]}"; do
+              if [[ ! "$file" =~ ^Work/Aufgaben/.*\.tex$ ]]; then
+                continue
+              fi
+
+              current_dir="$(dirname "$file")"
+              while [[ "$current_dir" != "." && "$current_dir" != "Work/Aufgaben" ]]; do
+                candidate="$current_dir/main.tex"
+                if [[ -f "$candidate" ]]; then
+                  targets["$candidate"]=1
+                  break
+                fi
+                current_dir="$(dirname "$current_dir")"
+              done
+            done
+          fi
+
+          {
+            echo "targets<<EOF"
+            for key in "${!targets[@]}"; do
+              echo "$key"
+            done | sort
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build outputs
+        if: steps.targets.outputs.targets != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r source_tex; do
+            [[ -z "$source_tex" ]] && continue
+
+            source_dir="$(dirname "$source_tex")"
+            rel_path="${source_dir#Work/Aufgaben/}"
+            out_dir="$rel_path"
+            last_folder="$(basename "$source_dir")"
+
+            mkdir -p "$out_dir"
+
+            latexmk -pdf -interaction=nonstopmode -halt-on-error "$source_tex"
+            cp "$source_dir/main.pdf" "$out_dir/$last_folder.pdf"
+
+            pandoc "$source_tex" -o "$out_dir/main.md"
+          done <<< "${{ steps.targets.outputs.targets }}"
+
+      - name: Commit generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "No generated output changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: regenerate TeX PDF and Markdown outputs"
+          git push
