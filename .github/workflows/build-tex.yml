@@ -115,6 +115,14 @@ jobs:
             pdf_out="$out_dir/$last_folder.pdf"
             md_out="$out_dir/README.md"
             cp "$source_dir/main.pdf" "$pdf_out"
+            # Copy local image assets so Markdown image links resolve on GitHub.
+            for ext in png PNG jpg JPG jpeg JPEG svg SVG webp WEBP gif GIF; do
+              while IFS= read -r asset; do
+                [[ -z "$asset" ]] && continue
+                cp "$asset" "$out_dir/$(basename "$asset")"
+                echo "$out_dir/$(basename "$asset")" >> "$outputs_file"
+              done < <(find "$source_dir" -maxdepth 1 -type f -name "*.$ext")
+            done
 
             (
               cd "$source_dir"
