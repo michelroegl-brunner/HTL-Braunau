@@ -1,0 +1,273 @@
+\documentclass[11pt, oneside, numbers=noenddot]{scrbook}  
+
+\usepackage{../../../Templates/Styling/style}
+
+\def\Title{LINUX Shell}	
+\def\Subtitle{Grundlagen der BASH}
+
+
+\begin{document}
+\input{../../../Templates/Styling/deckblatt.tex}
+\tableofcontents
+\pagenumbering{arabic}		
+
+
+
+\chapter{Grundlagen}
+
+\section{Was ist Linux?}
+Linux ist ein freies, plattformunabhaengiges Mehrbenutzer-Betriebssystem. In der Praxis verwendet man fast immer eine Linux-Distribution. Eine Distribution kombiniert den Linux-Kernel mit Programmen, Paketverwaltung und Werkzeugen zu einem sofort nutzbaren Gesamtsystem.
+
+Linux trennt klar zwischen Hardware und Anwendungen. Programme greifen nicht direkt auf Geraete zu, sondern nutzen Systemaufrufe. Der Kernel nimmt diese Aufrufe entgegen, verwaltet Ressourcen und steuert ueber Treiber die Kommunikation mit der Hardware.
+
+\section{Aufbau des Systems}
+\subsection{Kernel, Treiber und Systemaufrufe}
+Der Kernel ist das Kernstueck des Betriebssystems. Er stellt Funktionen fuer Speicherverwaltung, Prozessverwaltung, Dateisysteme und Geraetezugriff bereit. Wenn ein Programm z.\,B.\ Text ausgeben will, startet es einen Systemaufruf. Erst das Betriebssystem fuehrt die Aktion auf der Hardware aus.
+
+Treiber sind die Schnittstelle zu konkreten Geraeten. Dadurch bleibt Software weitgehend unabhaengig von einzelner Hardware, weil der Zugriff immer ueber den Kernel und die passenden Treiber erfolgt.
+\newpage
+\subsection{Shell und Prozesse}
+Die Shell ist eine textbasierte Benutzerschnittstelle. In dieser Arbeit wird die \textbf{BASH} (Bourne Again Shell) verwendet, die auf vielen Linux-Systemen Standardshell ist. Befehle in der Shell werden vom System verarbeitet und als entsprechende Operationen ausgefuehrt.
+
+Linux ist ein Multitasking-System: Mehrere Prozesse koennen scheinbar gleichzeitig laufen. Ein Scheduler teilt die CPU-Zeit in sehr kleine Zeitscheiben auf und weist sie Prozessen zu. Dadurch bleibt das System reaktionsfaehig, auch wenn einzelne Programme viel Rechenzeit benoetigen.
+
+\section{Benutzer, Gruppen und Rechte}
+Linux ist ein Multiuser-System. Jeder Benutzer besitzt eine eindeutige \textbf{User ID (UID)} und ist mindestens einer Gruppe mit \textbf{Group ID (GID)} zugeordnet. Ueber Benutzer- und Gruppenzugehoerigkeit wird gesteuert, wer welche Dateien lesen, veraendern oder ausfuehren darf.
+
+Eine Sonderrolle hat der Benutzer \textbf{root} mit UID~0. Root besitzt nahezu uneingeschraenkten Zugriff auf das gesamte System. Deshalb arbeitet man im Alltag moeglichst mit einem normalen Benutzerkonto und verwendet administrative Rechte nur gezielt.
+
+\section{Dateien und Dateirechte}
+Datei- und Verzeichnisnamen sind unter Linux case-sensitive: \texttt{DATEI}, \texttt{datei} und \texttt{Datei} sind verschiedene Namen. Punkte sind normale Zeichen im Dateinamen. Namen, die mit einem Punkt beginnen, gelten als versteckt.
+
+Neben regulaeren Dateien gibt es weitere Dateiarten, unter anderem Verzeichnisse, symbolische Links und Geraetedateien. Unter Linux gilt grundsaetzlich: Vieles wird als Datei modelliert.
+
+Fuer Zugriffsrechte wird haeufig die Kurzschreibweise \texttt{rwx} verwendet:
+\begin{itemize}
+\item \texttt{r} (read): lesen
+\item \texttt{w} (write): schreiben
+\item \texttt{x} (execute): ausfuehren
+\end{itemize}
+Diese Rechte werden getrennt fuer Eigentuemer, Gruppe und andere Benutzer vergeben.
+
+\section{Dateisystem-Grundlagen}
+Ein Dateisystem organisiert Daten auf einem Datentraeger in Bloecken (bzw.\ Clustern) und verwaltet, wo Dateien physisch liegen. Die Wahl des Dateisystems beeinflusst unter anderem Performance, Zuverlaessigkeit und Wiederherstellbarkeit nach Fehlern.
+
+Unter Linux sind ext-Dateisysteme weit verbreitet, insbesondere ext4. Journalfaehige Dateisysteme protokollieren Metadaten-Aenderungen und erhoehen so die Konsistenz nach Abstuerzen.
+
+\section{Verzeichnisstruktur unter Linux}
+Im Gegensatz zu Windows mit mehreren Laufwerksbuchstaben besitzt Linux einen einzigen Verzeichnisbaum ab dem Wurzelverzeichnis \texttt{/}. Weitere Datentraeger werden an passenden Stellen in diesen Baum eingehangen (gemountet).
+
+Wichtige Verzeichnisse sind zum Beispiel:
+\begin{itemize}
+\item \texttt{/bin}: grundlegende Programme
+\item \texttt{/boot}: Kernel und Startdateien
+\item \texttt{/dev}: Geraetedateien
+\item \texttt{/etc}: systemweite Konfiguration
+\item \texttt{/home}: Home-Verzeichnisse normaler Benutzer
+\item \texttt{/root}: Home-Verzeichnis des Benutzers root
+\item \texttt{/tmp}: temporaere Dateien
+\item \texttt{/usr}: Programme und systemweite Ressourcen
+\item \texttt{/var}: veraenderliche Daten, z.\,B.\ Logs
+\end{itemize}
+
+Diese einheitliche Struktur ist ein grosser Vorteil von Linux/Unix-Systemen, weil man sich auf unterschiedlichen Distributionen schnell zurechtfindet.
+
+\section{Distributionen und Desktop-Umgebungen}
+Linux liegt nicht als ein einziges fertiges Produkt vor, sondern in vielen Distributionen. Bekannte Beispiele sind Debian, Fedora, openSUSE, Ubuntu und Linux Mint. Sie unterscheiden sich unter anderem bei Paketquellen, Release-Modell, Vorkonfiguration und Zielgruppe.
+
+Auch die grafische Oberflaeche ist frei waehlbar. Verbreitete Desktop-Umgebungen sind GNOME, KDE, XFCE, MATE und Cinnamon. Fuer den Shell-Unterricht ist jedoch vor allem relevant, dass alle diese Systeme eine leistungsfaehige Kommandozeile mit BASH bereitstellen.
+
+\chapter{Die Linux-Shell (Bash)}
+\section{Grundidee der Shell}
+Die Shell ist die textbasierte Schnittstelle zwischen Benutzer und Betriebssystem. In dieser Arbeit wird die Bash (Bourne Again Shell) verwendet. Befehle werden in der Kommandozeile eingegeben und direkt ausgefuehrt. Viele Verwaltungs- und Automatisierungsaufgaben lassen sich damit schneller erledigen als ueber eine grafische Oberflaeche.
+
+Nach dem Start befindet man sich ueblicherweise im Home-Verzeichnis. Mit \texttt{pwd} (print working directory) kann jederzeit geprueft werden, in welchem Verzeichnis man aktuell arbeitet.
+
+\section{Navigation und Orientierung}
+Die wichtigsten Befehle fuer den Einstieg sind:
+\begin{itemize}
+\item \texttt{ls}: listet Dateien und Verzeichnisse auf
+\item \texttt{ls -l}: detaillierte Ansicht mit Rechten, Besitzer und Groesse
+\item \texttt{ls -a}: zeigt auch versteckte Dateien (Namen mit Punkt am Anfang)
+\item \texttt{cd <verzeichnis>}: wechselt in ein Verzeichnis
+\item \texttt{cd ..}: wechselt eine Ebene nach oben
+\item \texttt{cd /}: wechselt ins Wurzelverzeichnis
+\item \texttt{cd}: wechselt ins Home-Verzeichnis
+\end{itemize}
+
+Zum Suchen von Dateien dient \texttt{find}, zum Beispiel \texttt{find /etc -name fonts.conf}. Damit kann man gezielt in Verzeichnisbaeumen nach Dateinamen suchen.
+
+\section{Dateien lesen, erstellen und verwalten}
+Zum Lesen von Textdateien eignet sich \texttt{less}. Die Datei wird seitenweise angezeigt, was bei groesseren Inhalten deutlich uebersichtlicher ist als eine direkte Komplettausgabe.
+
+Dateien und Ordner werden mit folgenden Befehlen erstellt:
+\begin{itemize}
+\item \texttt{mkdir <name>}: neues Verzeichnis
+\item \texttt{touch <name>}: leere Datei
+\end{itemize}
+
+Fuer die Verwaltung werden vor allem drei Befehle verwendet:
+\begin{itemize}
+\item \texttt{cp <quelle> <ziel>}: kopieren
+\item \texttt{mv <quelle> <ziel>}: verschieben oder umbenennen
+\item \texttt{rm <datei>} und \texttt{rmdir <verzeichnis>}: loeschen
+\end{itemize}
+
+\section{Variablen und Ausgabe}
+Mit \texttt{echo} werden Texte oder Variableninhalte ausgegeben. Variablen lassen sich direkt in der Shell setzen:
+\begin{itemize}
+\item \texttt{MeinText="Ich bin wiederverwendbar"}
+\item \texttt{echo \$MeinText}
+\end{itemize}
+
+Wichtige Umgebungsvariablen sind zum Beispiel \texttt{\$HOME}, \texttt{\$HOSTNAME}, \texttt{\$LOGNAME} und \texttt{\$UID}. Sie stellen Systeminformationen bereit und sind besonders in Shell-Skripten nuetzlich.
+
+\section{Umleitungen und Pipes}
+Die Standardausgabe kann in Dateien umgeleitet werden:
+\begin{itemize}
+\item \texttt{>}: schreibt neu und ueberschreibt vorhandenen Inhalt
+\item \texttt{>>}: haengt an vorhandenen Inhalt an
+\end{itemize}
+
+Beispiel: \texttt{ls -l > info.txt}
+
+Fehlerausgaben lassen sich getrennt behandeln, z.\,B.\ mit \texttt{2> /dev/null}. Mit \texttt{|} (Pipe) wird die Ausgabe eines Befehls als Eingabe fuer den naechsten genutzt, z.\,B.\ \texttt{ls -l | less}.
+
+\section{Filtern, Hilfe und Administration}
+\texttt{cat} gibt Dateiinhalt auf der Standardausgabe aus. In Kombination mit Wildcards oder Umleitung koennen auch mehrere Dateien zusammengefuehrt werden.
+
+\texttt{grep} filtert Zeilen nach Mustern. Das ist hilfreich, um in grossen Ausgaben schnell relevante Zeilen zu finden oder irrelevante auszuschliessen.
+
+Fuer Dokumentation und Hilfe stehen drei Werkzeuge bereit:
+\begin{itemize}
+\item \texttt{man <befehl>}: Handbuchseite
+\item \texttt{info <befehl>}: erweiterte Info-Dokumentation
+\item \texttt{help}: integrierte Hilfe der Shell
+\end{itemize}
+
+Administrationsaufgaben werden mit erhoehten Rechten ausgefuehrt. Dazu dienen je nach System \texttt{su} oder \texttt{sudo}. Im Alltag sollte weiterhin mit normalen Benutzerrechten gearbeitet werden.
+
+\chapter{Aufgaben zur Linux-Shell}
+\begin{enumerate}
+\item Lege in deinem Home-Verzeichnis ein Verzeichnis mit dem Namen \texttt{COPR} an.
+\item Gib den String \texttt{Hello, world!} in der Shell aus.
+\item Pruefe mit \texttt{man}, wie \texttt{echo} offiziell beschrieben wird.
+\item Gib die Strings \texttt{fee}, \texttt{fie}, \texttt{foe} und \texttt{fum} aus und nutze dabei die Befehls-Historie mit den Pfeiltasten.
+\item Loesche die sichtbare Ausgabe in der Kommandozeile.
+\item Gib den Text \texttt{Use "man echo". Tippe: Doppelte Anfuehrungszeichen verwenden.} korrekt aus.
+\item Finde mit \texttt{help} heraus, wie das Terminal fuer 5 Sekunden pausiert werden kann (\texttt{sleep}).
+\item Erzeuge mit \texttt{echo} und Umleitung zwei Dateien \texttt{line\_1.txt} und \texttt{line\_2.txt} mit beliebigem Inhalt.
+\item Kombiniere beide Dateien mit \texttt{cat} in eine dritte Datei.
+\item Zeige den Inhalt der dritten Datei mit \texttt{less} an.
+\item Liste alle nicht versteckten Dateien auf, die mit \texttt{l} beginnen.
+\item Liste alle Dateien inklusive versteckter Dateien in der langen Form auf.
+\item Erstelle \texttt{foo.txt} mit dem Inhalt \texttt{hello world}, kopiere die Datei und nenne die Kopie \texttt{bar.txt}.
+\item Notiere die noetigen Befehle, um eine Datei \texttt{foo} in \texttt{bar} umzubenennen und danach eine Kopie \texttt{foobar} zu erzeugen.
+\end{enumerate}
+
+\chapter{Linux Shell Skripte}
+\section{Einführung in Bash-Skripte}
+Ein Bash-Skript ist eine Textdatei mit Shell-Befehlen, die nacheinander ausgefuehrt werden. Am Beginn steht ueblicherweise der sogenannte Shebang:
+\begin{itemize}
+\item \texttt{\#!/bin/bash}
+\end{itemize}
+Damit wird festgelegt, mit welcher Shell das Skript interpretiert werden soll. Danach koennen beliebige Befehle folgen, z.\,B.\ \texttt{echo 'Servus Linux'}.
+
+Damit ein Skript direkt gestartet werden kann, muss es ausfuehrbar sein, zum Beispiel mit \texttt{chmod +x <datei>}. Der Start erfolgt dann ueber:
+\begin{itemize}
+\item \texttt{./<dateiname>}
+\item \texttt{./<dateiname> <parameter1> <parameter2>}
+\end{itemize}
+
+\section{Parameter und Exit-Codes}
+Beim Aufruf koennen Parameter uebergeben werden. Im Skript werden sie ueber Stellungsparameter angesprochen:
+\begin{itemize}
+\item \texttt{\$0}: Name des Skripts
+\item \texttt{\$1}, \texttt{\$2}, \dots: uebergebene Parameter
+\item \texttt{\$\#}: Anzahl aller Parameter
+\item \texttt{\$?}: Exit-Code des zuletzt ausgefuehrten Befehls
+\end{itemize}
+
+Ein Exit-Code von \texttt{0} bedeutet meist Erfolg, ein Wert ungleich \texttt{0} weist auf einen Fehler hin. Mit \texttt{exit <code>} kann ein Skript einen eigenen Rueckgabewert setzen.
+
+\section{Bedingungen mit test und if}
+Fuer logische Pruefungen werden in Bash meist \texttt{test} oder die Kurzschreibweise \texttt{[ ... ]} verwendet. Typische Pruefungen sind:
+\begin{itemize}
+\item String-Vergleich: \texttt{==}
+\item Zahlenvergleich: \texttt{-eq}, \texttt{-lt}, \texttt{-gt}
+\item Datei existiert: \texttt{-e}
+\item Verzeichnis existiert: \texttt{-d}
+\item String leer/nicht leer: \texttt{-z}, \texttt{-n}
+\end{itemize}
+
+Darauf baut die \texttt{if}-Anweisung auf:
+\begin{itemize}
+\item \texttt{if [ <bedingung> ]; then ... else ... fi}
+\end{itemize}
+Wichtig ist die korrekte Schreibweise mit Leerzeichen innerhalb der eckigen Klammern.
+
+\section{Schleifen in Bash}
+Fuer Wiederholungen werden vor allem \texttt{for}- und \texttt{while}-Schleifen verwendet.
+
+\textbf{for} eignet sich gut fuer bekannte Wiederholungszahlen oder Listen, zum Beispiel zum Durchlaufen von Parametern. \textbf{while} wird genutzt, solange eine Bedingung wahr ist, etwa fuer Zaehler-Schleifen.
+
+Beide Schleifentypen sind zentrale Werkzeuge, um wiederkehrende Aufgaben in Skripten kompakt und sauber zu loesen.
+
+\section{Funktionen und Variablenbereiche}
+Funktionen strukturieren Skripte und machen Code wiederverwendbar. Parameter werden innerhalb von Funktionen ebenfalls ueber \texttt{\$1}, \texttt{\$2}, \dots angesprochen.
+
+Rueckgaben erfolgen mit \texttt{return}. Fuer den Variablenbereich gilt:
+\begin{itemize}
+\item globale Variablen sind im ganzen Skript sichtbar
+\item lokale Variablen werden in Funktionen mit \texttt{local} deklariert
+\end{itemize}
+So lassen sich Seiteneffekte vermeiden und Skripte besser wartbar halten.
+
+\section{Debugging und praktische Hinweise}
+Zum Nachvollziehen der Befehlsausfuehrung ist \texttt{bash -x <skript>} sehr hilfreich. Damit wird beim Lauf angezeigt, welche Zeilen gerade ausgefuehrt werden und welche Werte Variablen annehmen.
+
+Fuer robustere Skripte sollten Eingaben frueh geprueft werden (Anzahl und Gueltigkeit der Parameter, Existenz von Dateien/Verzeichnissen, Rechtepruefung bei Admin-Aufgaben).
+
+\chapter{Aufgaben zu Shell-Skripten}
+\section{Leicht}
+\begin{enumerate}
+\item \textbf{Einfache Rechenmaschine (\texttt{rechner.sh})}\\
+Nimm zwei Zahlen als Parameter entgegen und berechne Summe, Differenz, Produkt und Division in einer gut lesbaren Ausgabe.\\
+\textit{Beispiel Eingabe:} \texttt{./rechner.sh 10 5}\\
+\textit{Beispiel Ausgabe:} \texttt{Summe: 15, Differenz: 5, Produkt: 50, Division: 2}\\
+\textit{Erweiterung:} Gib eine Fehlermeldung aus, wenn Parameter fehlen oder ungueltig sind.
+
+\item \textbf{Dateizaehler in einem Verzeichnis (\texttt{count\_files.sh})}\\
+Nimm ein Verzeichnis als Parameter, pruefe dessen Existenz und zaehle Dateien sowie Unterordner.\\
+\textit{Beispiel Eingabe:} \texttt{./count\_files.sh ./testdaten}\\
+\textit{Beispiel Ausgabe:} \texttt{Dateien: 8, Ordner: 3}\\
+\textit{Erweiterung:} Zaehle optional nur Dateien mit einer bestimmten Endung (z.\,B.\ \texttt{.txt}).
+\end{enumerate}
+
+\section{Mittel}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item \textbf{Backup-Skript (\texttt{backup.sh})}\\
+Kopiere ein angegebenes Verzeichnis in ein Backup-Verzeichnis und versehe den Zielordner mit Zeitstempel (z.\,B.\ \texttt{backup\_2026-02-27\_14-30}).\\
+\textit{Beispiel Eingabe:} \texttt{./backup.sh ./projekt ./backups}\\
+\textit{Beispiel Ausgabe:} \texttt{Backup erstellt: ./backups/backup\_2026-02-27\_14-30}\\
+\textit{Erweiterung:} Loesche alte Backups automatisch (aelter als 7 Tage).
+
+\item \textbf{Logfile-Analyzer (\texttt{log\_analyzer.sh})}\\
+Analysiere eine Logdatei und zaehle, wie oft \texttt{ERROR}, \texttt{WARNING} und \texttt{INFO} vorkommen. Gib die Ergebnisse formatiert aus.\\
+\textit{Beispiel Eingabe:} \texttt{./log\_analyzer.sh app.log}\\
+\textit{Beispiel Ausgabe:} \texttt{ERROR: 4, WARNING: 7, INFO: 21}\\
+\textit{Erweiterung:} Werte optional nur einen per Parameter gewaehlten Log-Level aus.
+\end{enumerate}
+
+\section{Schwer}
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item \textbf{Benutzer-Management-Skript (\texttt{user\_manager.sh})}\\
+Pruefe, ob das Skript mit Root-Rechten laeuft, und unterstuetze das Hinzufuegen sowie Loeschen von Benutzern (\texttt{add}/\texttt{delete}). Pruefe dabei auch, ob ein Benutzer bereits existiert.\\
+\textit{Beispiel Eingabe:} \texttt{sudo ./user\_manager.sh add max}\\
+\textit{Beispiel Ausgabe:} \texttt{Benutzer max wurde erfolgreich angelegt.}\\
+\textit{Erweiterung:} Passwort automatisch generieren und Benutzer einer Gruppe zuordnen.
+\end{enumerate}
+
+\end{document}

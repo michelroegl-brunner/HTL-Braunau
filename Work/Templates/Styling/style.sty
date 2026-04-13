@@ -1,0 +1,115 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{../../../Templates/Styling/style}
+
+% fonts
+\usepackage{lmodern}
+
+% layout
+\usepackage[margin=2.5cm]{geometry}
+
+% math
+\usepackage{amsmath,amssymb}
+
+% graphics
+\usepackage{graphicx}
+
+% links
+\usepackage[colorlinks=true]{hyperref}
+
+% spacing
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{Archivo}
+\usepackage[T1]{fontenc}
+
+\usepackage{geometry}                		
+%\usepackage{german}
+%\usepackage{ngerman}
+\usepackage[german]{babel}
+% KOMA-Script classes (e.g. scrbook) should use the class option, not package parskip.
+\KOMAoptions{parskip=half}    			% Empty line between paragraphs, reduced indentation
+
+
+\usepackage{amssymb}
+\usepackage{mathtools} % includes amsmath
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{lscape}
+
+%\usepackage{arydshln} attention: not compatible with longtable
+\usepackage{tabularx}
+\usepackage{longtable} % table over multiple pages
+\usepackage{multirow}
+\usepackage{subfig}
+\usepackage{pdfpages}
+\usepackage{framed}
+
+\usepackage{forloop}								
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage{color} 
+\usepackage{colortbl}
+\usepackage{courier}
+\usepackage{pifont}
+
+
+\usepackage{float} % für \begin{figure}[H]
+\usepackage[automark]{scrlayer-scrpage}
+
+
+\usepackage{multicol} % für mehrspaltige Texte
+
+
+\definecolor{grey}{RGB}{127,127,127}
+\definecolor{lightgrey}{RGB}{180,180,180}
+\definecolor{dkgreen}{rgb}{0,0.6,0}  
+\definecolor{gray}{rgb}{0.5,0.5,0.5} 
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\definecolor{cssId}{rgb}		{0,0,0.6 }%{0.75, 0.00, 0.00 }
+\definecolor{cssAttribute}{rgb}	{0.58,0,0.82 }%{0.00, 0.00, 0.75 }
+\definecolor{cssClass}{rgb}		{0,0,0.6 }%{0.00, 0.75, 0.00 }
+\definecolor{cssComment}{rgb}	{0,0.6,0 }%{0.00, 0.75, 0.00 }
+\definecolor{cssString}{rgb}	{0.6,0,0 }%{0.00, 0.75, 0.00 }
+
+
+
+%	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 	Diverse Befehle		
+%	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%	Quelltext im Textfluss
+\def\inlinecode#1{\texttt{\color{gray}{#1}}}
+
+
+%	Paragraph mit Zeilenumbruch nachher
+\def\htlParagraph#1{\paragraph*{#1}$\;$ \\}
+
+%   Short Version of \today
+\newcommand{\leadingzero}[1]{\ifnum #1<10 0\the#1\else\the#1\fi}
+\newcommand{\todayshort}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+
+% Prevent scrlayer-scrpage warning: header with logo needs a bit more space.
+\setlength{\headheight}{18.4pt}
+
+\clearpairofpagestyles
+
+% Kopfzeile links: Kapitel rechts: HTL Logo
+\ihead{\headmark}
+\ohead{\includegraphics[width=0.9cm]{../../../Templates/Styling/htl_c_cmyk_rein.pdf}}
+
+\ofoot*{\pagemark}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{scrheadings}
+
+
+\geometry {a4paper, bottom=30mm, right=25mm}%, left=30mm, right=30mm, top=25mm, bottom=25mm}
+
+\author{Michel Rögl-Brunner - HTL Braunau am Inn}
+\date{\today}
+
+
+
