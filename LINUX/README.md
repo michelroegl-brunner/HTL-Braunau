@@ -39,6 +39,7 @@
   - [Leicht](#leicht)
   - [Mittel](#mittel)
   - [Schwer](#schwer)
+- [Beispieldateien und Download](#beispieldateien-und-download)
 - [Abgabe](#abgabe)
 
 # Grundlagen
@@ -499,7 +500,11 @@ Rechteprüfung bei Admin-Aufgaben).
     *Beispiel Eingabe:* `./log_analyzer.sh app.log`  
     *Beispiel Ausgabe:* `ERROR: 4, WARNING: 7, INFO: 21`  
     *Erweiterung:* Werte optional nur einen per Parameter gewählten
-    Log-Level aus.
+    Log-Level aus.  
+    *Input-Datei:*
+    `BEISPIELDATEIN/LINUX/Aufgabe-Logfile-Analyzer/app.log`  
+    *Direktlink:*
+    `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/LINUX/Aufgabe-Logfile-Analyzer/app.log`
 
 5.  **Shell-Skript zum Bewegen von Dateien (`mvprot.sh`)**  
     Entwickle ein Skript, das im aktüllen Verzeichnis alle Dateien einer
@@ -525,6 +530,35 @@ Rechteprüfung bei Admin-Aufgaben).
     *Beispiel Ausgabe:* `Benutzer max wurde erfolgreich angelegt.`  
     *Erweiterung:* Passwort automatisch generieren und Benutzer einer
     Gruppe zuordnen.
+
+# Beispieldateien und Download
+
+Wenn fuer eine Aufgabe Beispieldateien benoetigt werden, liegen diese im
+Repository unter:
+
+- `BEISPIELDATEIN/LINUX/<AUFGABE>/...`
+
+- `BEISPIELDATEIN/POWERSHELL/<AUFGABE>/...`
+
+Beispiele fuer Linux-Aufgaben:
+
+- `BEISPIELDATEIN/LINUX/Aufgabe-8/line_1.txt`
+
+- `BEISPIELDATEIN/LINUX/Aufgabe-8/line_2.txt`
+
+- `BEISPIELDATEIN/LINUX/Aufgabe-13/foo.txt`
+
+- `BEISPIELDATEIN/LINUX/Aufgabe-Logfile-Analyzer/app.log`
+
+Download direkt ueber GitHub:
+
+- Einzeldatei: Datei oeffnen, `Raw` klicken, danach speichern.
+
+- Ganze Sammlung:
+  `https://github.com/michelroegl-brunner/HTL-Braunau/archive/refs/heads/main.zip`
+
+- Raw-Schema:
+  `https://raw.githubusercontent.com/michelroegl-brunner/HTL-Braunau/main/BEISPIELDATEIN/<AUFGABE>/<DATEI>`
 
 # Abgabe
 
