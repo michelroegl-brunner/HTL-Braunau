@@ -123,6 +123,7 @@ jobs:
 
             (
               cd "$source_dir"
+              export TEXINPUTS="$source_dir//:$GITHUB_WORKSPACE/Work/Templates/Styling//:$GITHUB_WORKSPACE/Work/templates/Styling//:"
               pandoc main.tex \
                 --resource-path="$source_dir:$GITHUB_WORKSPACE/Work/Templates/Styling:$GITHUB_WORKSPACE/Work/templates/Styling" \
                 -o "$GITHUB_WORKSPACE/$md_out"
