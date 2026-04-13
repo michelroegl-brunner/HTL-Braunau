@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "Work/Aufgaben/**/*.tex"
+      - "Work/templates/**"
       - "Work/Templates/**"
 
 permissions:
@@ -98,10 +99,16 @@ jobs:
 
             mkdir -p "$out_dir"
 
-            latexmk -pdf -interaction=nonstopmode -halt-on-error "$source_tex"
+            (
+              cd "$source_dir"
+              latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+            )
             cp "$source_dir/main.pdf" "$out_dir/$last_folder.pdf"
 
-            pandoc "$source_tex" -o "$out_dir/main.md"
+            (
+              cd "$source_dir"
+              pandoc main.tex -o "$GITHUB_WORKSPACE/$out_dir/main.md"
+            )
           done <<< "${{ steps.targets.outputs.targets }}"
 
       - name: Commit generated outputs
