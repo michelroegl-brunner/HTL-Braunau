@@ -88,6 +88,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          tex_config="$GITHUB_WORKSPACE/Work/Aufgaben/latexmkrc"
+
+          if [[ ! -f "$tex_config" ]]; then
+            echo "Missing latexmk config: $tex_config"
+            exit 1
+          fi
 
           while IFS= read -r source_tex; do
             [[ -z "$source_tex" ]] && continue
@@ -101,7 +107,7 @@ jobs:
 
             (
               cd "$source_dir"
-              latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+              latexmk -r "$tex_config" -pdf -interaction=nonstopmode -halt-on-error main.tex
             )
             cp "$source_dir/main.pdf" "$out_dir/$last_folder.pdf"
 
