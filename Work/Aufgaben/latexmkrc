@@ -1,0 +1,26 @@
+use Cwd qw(abs_path getcwd);
+use File::Basename qw(dirname);
+
+my $probe_dir = abs_path(getcwd());
+my $styling_dir = undef;
+
+while (defined $probe_dir) {
+    my $candidate = "$probe_dir/Templates/Styling";
+    if (-d $candidate) {
+        $styling_dir = $candidate;
+        last;
+    }
+
+    my $parent = dirname($probe_dir);
+    last if !defined $parent || $parent eq $probe_dir;
+    $probe_dir = $parent;
+}
+
+if (defined $styling_dir) {
+    $styling_dir =~ s{\\}{/}g;
+    my $sep = ($^O eq 'MSWin32') ? ';' : ':';
+    my $existing = $ENV{TEXINPUTS} // '';
+    $ENV{TEXINPUTS} = "$styling_dir//" . $sep . $existing;
+} else {
+    die "Could not locate Templates/Styling from current working directory.\n";
+}
