@@ -175,16 +175,7 @@ Adressregel:
 
 ## Logische Darstellung mit IPs
 
-    PC-VLAN10 (10.10.10.1/24, GW 10.10.10.254) -- Access VLAN 10 --+
-                                                                    |
-                                                                 SW-3550
-                                                         SVI10: 10.10.10.253
-                                                         SVI20: 10.10.20.253
-                                                                    |
-                                                              802.1Q Trunk
-                                                                    |
-                                                            RTR-2800 Gi0/0 (oder Fa0/0)
-                                                       Gi0/0.10 (oder Fa0/0.10): 10.10.10.254
-                                                       Gi0/0.20 (oder Fa0/0.20): 10.10.20.254
-                                                                    |
-    PC-VLAN20 (10.10.20.1/24, GW 10.10.20.254) -- Access VLAN 20 --+
+<figure>
+
+<figcaption>Topologie fuer die Router-on-a-Stick-Uebung</figcaption>
+</figure>
