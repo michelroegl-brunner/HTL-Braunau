@@ -6,6 +6,7 @@
     Router?](#was-macht-ein-subinterface-am-router)
 - [Topologie](#topologie)
   - [Standardaufbau pro Gruppe](#standardaufbau-pro-gruppe)
+  - [Logische Netzzeichnung](#logische-netzzeichnung)
 - [IP-Plan](#ip-plan)
   - [Adressierungstabelle](#adressierungstabelle)
   - [Interface-Belegung (Verkabelung)](#interface-belegung-verkabelung)
@@ -15,8 +16,6 @@
   - [Teil C: Endgeraete konfigurieren und
     testen](#teil-c-endgeraete-konfigurieren-und-testen)
   - [Kontrollbefehle](#kontrollbefehle)
-- [Netzzeichnung](#netzzeichnung)
-  - [Logische Darstellung mit IPs](#logische-darstellung-mit-ips)
 
 # Grundlagen
 
@@ -85,6 +84,13 @@ Jede Gruppe arbeitet mit derselben Standard-Topologie:
 - 2 VLANs (VLAN 10 und VLAN 20)
 
 - 1 PC pro VLAN
+
+## Logische Netzzeichnung
+
+<figure>
+
+<figcaption>Topologie fuer die Router-on-a-Stick-Uebung</figcaption>
+</figure>
 
 Adressregel:
 
@@ -170,12 +176,3 @@ Adressregel:
     show ip interface brief
     show running-config
     ping <ziel-ip>
-
-# Netzzeichnung
-
-## Logische Darstellung mit IPs
-
-<figure>
-
-<figcaption>Topologie fuer die Router-on-a-Stick-Uebung</figcaption>
-</figure>
