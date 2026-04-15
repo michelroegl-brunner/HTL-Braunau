@@ -148,20 +148,25 @@ ping <ziel-ip>
 
 \chapter{Netzzeichnung}
 \section{Logische Darstellung mit IPs}
-\begin{verbatim}
-PC-VLAN10 (10.10.10.1/24, GW 10.10.10.254) -- Access VLAN 10 --+
-                                                                |
-                                                             SW-3550
-                                                     SVI10: 10.10.10.253
-                                                     SVI20: 10.10.20.253
-                                                                |
-                                                          802.1Q Trunk
-                                                                |
-                                                        RTR-2800 Gi0/0 (oder Fa0/0)
-                                                   Gi0/0.10 (oder Fa0/0.10): 10.10.10.254
-                                                   Gi0/0.20 (oder Fa0/0.20): 10.10.20.254
-                                                                |
-PC-VLAN20 (10.10.20.1/24, GW 10.10.20.254) -- Access VLAN 20 --+
-\end{verbatim}
+\begin{figure}[H]
+\centering
+\IfFileExists{Work/Aufgaben/NWT/Router-on-a-Stick/Router-on-a-Stick.png}{%
+  \includegraphics[width=0.45\textwidth]{Work/Aufgaben/NWT/Router-on-a-Stick/Router-on-a-Stick.png}%
+}{%
+  \IfFileExists{Bilder/Router-on-a-Stick.png}{%
+    \includegraphics[width=0.45\textwidth]{Bilder/Router-on-a-Stick.png}%
+  }{%
+    \IfFileExists{Router-on-a-Stick.png}{%
+      \includegraphics[width=0.45\textwidth]{Router-on-a-Stick.png}%
+    }{%
+      \fbox{\parbox{0.9\textwidth}{%
+        Bilddatei fehlt: \texttt{Router-on-a-Stick.png}.\\
+        Erwarteter Pfad: \texttt{Bilder/Router-on-a-Stick.png}
+      }}%
+    }%
+  }%
+}
+\caption{Topologie fuer die Router-on-a-Stick-Uebung}
+\end{figure}
  
 \end{document}
