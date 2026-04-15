@@ -59,6 +59,28 @@ Jede Gruppe arbeitet mit derselben Standard-Topologie:
 \item 1 PC pro VLAN
 \end{itemize}
 
+\section{Logische Netzzeichnung}
+\begin{figure}[H]
+\centering
+\IfFileExists{../../Bilder/Router-on-a-Stick.png}{%
+  \includegraphics[width=0.45\textwidth]{../../Bilder/Router-on-a-Stick.png}%
+}{%
+  \IfFileExists{../../../../Bilder/Router-on-a-Stick.png}{%
+    \includegraphics[width=0.45\textwidth]{../../../../Bilder/Router-on-a-Stick.png}%
+  }{%
+    \IfFileExists{Router-on-a-Stick.png}{%
+      \includegraphics[width=0.45\textwidth]{Router-on-a-Stick.png}%
+    }{%
+      \fbox{\parbox{0.9\textwidth}{%
+        Bilddatei fehlt: \texttt{Router-on-a-Stick.png}.\\
+        Erwarteter Pfad: \texttt{../../../../Bilder/Router-on-a-Stick.png} (Work) oder \texttt{../../Bilder/Router-on-a-Stick.png} (NWT)
+      }}%
+    }%
+  }%
+}
+\caption{Topologie fuer die Router-on-a-Stick-Uebung}
+\end{figure}
+
 Adressregel:
 \begin{itemize}
 \item PC: \texttt{.1}
@@ -146,27 +168,4 @@ show running-config
 ping <ziel-ip>
 \end{verbatim}
 
-\chapter{Netzzeichnung}
-\section{Logische Darstellung mit IPs}
-\begin{figure}[H]
-\centering
-\IfFileExists{Work/Aufgaben/NWT/Router-on-a-Stick/Router-on-a-Stick.png}{%
-  \includegraphics[width=0.45\textwidth]{Work/Aufgaben/NWT/Router-on-a-Stick/Router-on-a-Stick.png}%
-}{%
-  \IfFileExists{Bilder/Router-on-a-Stick.png}{%
-    \includegraphics[width=0.45\textwidth]{Bilder/Router-on-a-Stick.png}%
-  }{%
-    \IfFileExists{Router-on-a-Stick.png}{%
-      \includegraphics[width=0.45\textwidth]{Router-on-a-Stick.png}%
-    }{%
-      \fbox{\parbox{0.9\textwidth}{%
-        Bilddatei fehlt: \texttt{Router-on-a-Stick.png}.\\
-        Erwarteter Pfad: \texttt{Bilder/Router-on-a-Stick.png}
-      }}%
-    }%
-  }%
-}
-\caption{Topologie fuer die Router-on-a-Stick-Uebung}
-\end{figure}
- 
 \end{document}
