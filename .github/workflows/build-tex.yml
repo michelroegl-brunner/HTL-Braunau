@@ -104,25 +104,6 @@ jobs:
 
             mkdir -p "$out_dir"
 
-            # Revisionstabelle aus git-Log generieren
-            rev_count=0
-            {
-              echo '\newpage'
-              echo '\section*{Revisionen}'
-              echo '\begin{longtable}{|p{0.8cm}|p{2.5cm}|p{8cm}|p{2.5cm}|}'
-              echo '\hline'
-              echo '\textbf{Nr.} & \textbf{Datum} & \textbf{Änderung} & \textbf{Autor} \\'
-              echo '\hline\endhead'
-              while IFS='|' read -r date msg author; do
-                rev_count=$((rev_count + 1))
-                msg_esc=$(echo "$msg" | sed 's/\\/\\textbackslash{}/g; s/[&%$#_{}~^]/\\&/g')
-                author_esc=$(echo "$author" | sed 's/\\/\\textbackslash{}/g; s/[&%$#_{}~^]/\\&/g')
-                echo "${rev_count} & ${date} & ${msg_esc} & ${author_esc} \\\\ \\hline"
-              done < <(git log --follow --pretty=format:"%ad|%s|%an" \
-                         --date=format:"%d.%m.%Y" -- "$source_tex" | head -20)
-              echo '\end{longtable}'
-            } > "$source_dir/revisions.tex"
-
             (
               cd "$source_dir"
               if [[ "$has_tex_config" == true ]]; then
@@ -131,7 +112,6 @@ jobs:
                 latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
               fi
             )
-            rm -f "$source_dir/revisions.tex"
             pdf_out="$out_dir/$last_folder.pdf"
             md_out="$out_dir/README.md"
             cp "$source_dir/main.pdf" "$pdf_out"
