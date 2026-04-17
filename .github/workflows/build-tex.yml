@@ -104,34 +104,23 @@ jobs:
 
             mkdir -p "$out_dir"
 
-            # Revisionstabelle aus git-Log generieren (nur Commits ab 2026-04-17)
-            since_date="2026-04-17"
-            today_fmt=$(date +"%d.%m.%Y")
-            mapfile -t log_lines < <(git log --follow \
-              --after="${since_date} 00:00:00" \
-              --pretty=format:"%ad|%s|%an" \
-              --date=format:"%d.%m.%Y" -- "$source_tex")
+            # Revisionstabelle aus git-Log generieren
+            rev_count=0
             {
-              echo '\begin{center}'
-              echo '\small'
-              echo '\begin{tabular}{|p{1.2cm}|p{2.2cm}|p{7cm}|}'
+              echo '\newpage'
+              echo '\section*{Revisionen}'
+              echo '\begin{longtable}{|p{0.8cm}|p{2.5cm}|p{8cm}|p{2.5cm}|}'
               echo '\hline'
-              echo '\textbf{Version} & \textbf{Datum} & \textbf{Änderung} \\'
-              echo '\hline'
-              if [[ ${#log_lines[@]} -eq 0 ]]; then
-                echo "1.0 & ${today_fmt} & Initiale Version \\\\ \\hline"
-              else
-                rev_count=${#log_lines[@]}
-                for log_line in "${log_lines[@]}"; do
-                  IFS='|' read -r date msg author <<< "$log_line"
-                  msg_esc=$(echo "$msg" | sed 's/\\/\\textbackslash{}/g; s/[&%$#_{}~^]/\\&/g')
-                  version="1.${rev_count}"
-                  echo "${version} & ${date} & ${msg_esc} \\\\ \\hline"
-                  rev_count=$((rev_count - 1))
-                done
-              fi
-              echo '\end{tabular}'
-              echo '\end{center}'
+              echo '\textbf{Nr.} & \textbf{Datum} & \textbf{Änderung} & \textbf{Autor} \\'
+              echo '\hline\endhead'
+              while IFS='|' read -r date msg author; do
+                rev_count=$((rev_count + 1))
+                msg_esc=$(echo "$msg" | sed 's/\\/\\textbackslash{}/g; s/[&%$#_{}~^]/\\&/g')
+                author_esc=$(echo "$author" | sed 's/\\/\\textbackslash{}/g; s/[&%$#_{}~^]/\\&/g')
+                echo "${rev_count} & ${date} & ${msg_esc} & ${author_esc} \\\\ \\hline"
+              done < <(git log --follow --pretty=format:"%ad|%s|%an" \
+                         --date=format:"%d.%m.%Y" -- "$source_tex" | head -20)
+              echo '\end{longtable}'
             } > "$source_dir/revisions.tex"
 
             (
