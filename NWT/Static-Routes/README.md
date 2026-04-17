@@ -169,7 +169,10 @@ Transportnetz zwischen den Gruppenroutern:
 
 ## Logische Netzzeichnung
 
-![Topologie fuer die Static-Routing-Uebung](../../Bilder/nwt-static-routing.png)
+<figure>
+
+<figcaption>Topologie fuer die Static-Routing-Uebung</figcaption>
+</figure>
 
 # IP-Tabellen pro Gruppe
 
