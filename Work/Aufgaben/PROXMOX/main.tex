@@ -1,0 +1,398 @@
+\documentclass[11pt, oneside, numbers=noenddot]{scrbook}
+
+\usepackage{style}
+
+\def\Title{Proxmox VE}
+\def\Subtitle{Virtualisierung, Installation und Grundlagen}
+
+
+\begin{document}
+\input{deckblatt.tex}
+\tableofcontents
+\pagenumbering{arabic}
+
+
+
+\chapter{Grundlagen der Virtualisierung}
+
+\section{Was ist Virtualisierung?}
+Virtualisierung bezeichnet die Technik, mehrere voneinander isolierte Betriebssysteminstanzen auf einer einzigen physischen Maschine zu betreiben. Eine spezielle Software, der sogenannte \textbf{Hypervisor}, verwaltet dabei den Zugriff auf die vorhandene Hardware und teilt deren Ressourcen -- CPU-Zeit, Arbeitsspeicher, Speicherplatz und Netzwerk -- zwischen den einzelnen virtuellen Maschinen (VMs) auf.
+
+Jede VM verhält sich aus Sicht des installierten Betriebssystems wie eigenständige Hardware. Die VMs sind vollständig voneinander isoliert: Ein Fehler oder Absturz in einer VM beeinflusst die anderen Maschinen nicht. Dies macht Virtualisierung besonders wertvoll für Serverumgebungen, Testlabore und Schulungsumgebungen, weil viele Dienste auf weniger physischen Geräten konsolidiert werden können.
+
+\section{Typ-1-Hypervisoren (Bare-Metal)}
+Bei einem \textbf{Typ-1-Hypervisor} läuft die Virtualisierungsschicht direkt auf der Hardware, ohne darunter liegendes Host-Betriebssystem. Der Hypervisor selbst übernimmt die Ressourcenverwaltung und stellt den VMs virtualisierte Hardware bereit.
+
+Bekannte Typ-1-Lösungen sind:
+\begin{itemize}
+  \item \textbf{Proxmox VE}: quelloffen, Debian-basiert, kombiniert KVM und LXC
+  \item \textbf{VMware ESXi}: kommerziell, weit verbreitet im Unternehmensumfeld
+  \item \textbf{Microsoft Hyper-V}: in Windows Server und Windows 10/11 Pro integriert
+\end{itemize}
+
+Da kein allgemeines Betriebssystem zwischen Hypervisor und Hardware liegt, sind Typ-1-Hypervisoren sehr effizient und für den Produktiveinsatz auf Servern ausgelegt.
+
+\section{Typ-2-Hypervisoren (Hosted)}
+Ein \textbf{Typ-2-Hypervisor} wird als normale Anwendung auf einem vorhandenen Host-Betriebssystem installiert. Er nutzt die Dienste des Host-Betriebssystems, um Ressourcen an VMs weiterzureichen. Diese zusätzliche Schicht bringt etwas mehr Overhead mit sich, vereinfacht aber die Installation und Nutzung erheblich.
+
+Typische Typ-2-Lösungen sind:
+\begin{itemize}
+  \item \textbf{VMware Workstation}: kommerziell, leistungsfähig, für Entwickler und Tester
+  \item \textbf{Oracle VirtualBox}: quelloffen, plattformübergreifend, für Einsteiger und Schulungen gut geeignet
+\end{itemize}
+
+Typ-2-Hypervisoren laufen problemlos auf normalen Arbeitsplatzrechnern und erfordern keine spezielle Serverkonfiguration. Dafür eignen sie sich weniger für den dauerhaften Produktivbetrieb vieler VMs gleichzeitig.
+
+\section{Vergleich Typ 1 und Typ 2}
+Der wichtigste Unterschied liegt in der Architektur und im typischen Einsatzbereich:
+
+\begin{itemize}
+  \item \textbf{Leistung}: Typ-1-Hypervisoren haben weniger Overhead, weil kein Host-Betriebssystem dazwischen liegt. VMs erhalten direkteren Zugriff auf die Hardware.
+  \item \textbf{Stabilität und Isolation}: Ohne Host-Betriebssystem gibt es weniger Angriffsfläche und weniger Fehlerquellen.
+  \item \textbf{Einsatzgebiet}: Typ 1 wird in Rechenzentren und auf dedizierten Servern eingesetzt. Typ 2 eignet sich für Entwicklung, Tests und Schulungen auf dem eigenen Laptop oder PC.
+  \item \textbf{Verwaltung}: Typ-2-Lösungen wie VirtualBox sind durch ihre grafische Oberfläche einfacher zu bedienen. Typ-1-Lösungen wie Proxmox werden meist über ein Webinterface oder die Kommandozeile verwaltet.
+  \item \textbf{Kosten}: VirtualBox und Proxmox VE sind kostenlos nutzbar. VMware ESXi und VMware Workstation sind kommerzielle Produkte.
+\end{itemize}
+
+
+
+\chapter{Proxmox VE im Überblick}
+
+\section{Was ist Proxmox VE?}
+\textbf{Proxmox Virtual Environment (Proxmox VE)} ist eine quelloffene Virtualisierungsplattform, die auf Debian GNU/Linux basiert. Sie kombiniert zwei bewährte Virtualisierungstechnologien:
+
+\begin{itemize}
+  \item \textbf{KVM (Kernel-based Virtual Machine)}: vollständige Hardwarevirtualisierung für beliebige Betriebssysteme, z.\,B.\ Windows, Linux oder FreeBSD
+  \item \textbf{LXC (Linux Containers)}: leichtgewichtige Container, die denselben Kernel wie der Host nutzen und mit sehr wenig Overhead betrieben werden können
+\end{itemize}
+
+Die Verwaltung erfolgt über ein intuitives Webinterface, das alle wichtigen Aufgaben abdeckt: VMs und Container anlegen, starten und stoppen, Ressourcen zuweisen, Snapshots erstellen und Backups einplanen. Zusätzlich steht eine vollständige Kommandozeilenschnittstelle bereit.
+
+Proxmox VE unterstützt den Betrieb mehrerer Server in einem gemeinsamen \textbf{Cluster}. Im Cluster können VMs zwischen Knoten migriert werden, ohne sie auszuschalten (\textit{Live Migration}), und der gemeinsame Speicher (\textit{Shared Storage}) wird zentral verwaltet.
+
+\section{Vergleich: Proxmox VE, VMware ESXi und Microsoft Hyper-V}
+Alle drei Produkte sind Typ-1-Hypervisoren für den Servereinsatz, unterscheiden sich aber deutlich in Lizenzmodell, Funktionsumfang und Zielgruppe.
+
+\textbf{Proxmox VE}:
+\begin{itemize}
+  \item vollständig quelloffen (AGPLv3), keine Lizenzkosten
+  \item optionaler Support-Vertrag für Updates aus dem Enterprise-Repository
+  \item kombiniert KVM und LXC in einer Plattform
+  \item sehr gute ZFS-Integration
+  \item Community-Support über Foren und Wiki
+\end{itemize}
+
+\textbf{VMware ESXi (vSphere)}:
+\begin{itemize}
+  \item kommerzielles Produkt von Broadcom (ehemals VMware)
+  \item Marktführer in großen Unternehmensumgebungen
+  \item sehr ausgereifte Clustering- und Hochverfügbarkeitsfunktionen (vSphere HA, vMotion)
+  \item kostspielige Lizenzierung, besonders seit der Übernahme durch Broadcom
+  \item sehr breite Hardware-Zertifizierung
+\end{itemize}
+
+\textbf{Microsoft Hyper-V}:
+\begin{itemize}
+  \item in Windows Server und Windows 10/11 Pro/Enterprise enthalten
+  \item enge Integration mit Active Directory und Windows-Diensten
+  \item gut geeignet für reine Windows-Umgebungen
+  \item Microsoft Azure nutzt Hyper-V als Basis
+  \item für Linux-VMs möglich, aber weniger optimiert als KVM
+\end{itemize}
+
+\section{Wann welche Lösung?}
+Die Wahl des Hypervisors hängt von Anforderungen, Budget und vorhandener Infrastruktur ab:
+
+\begin{itemize}
+  \item \textbf{Proxmox VE} empfiehlt sich für kleine bis mittlere Umgebungen, Schulen, Labore und überall dort, wo Lizenzkosten vermieden werden sollen. Auch als Einstieg in professionelle Virtualisierung ist Proxmox ideal.
+  \item \textbf{VMware ESXi} ist die erste Wahl in großen Unternehmensumgebungen mit hohen Anforderungen an Hochverfügbarkeit und einem entsprechenden Budget.
+  \item \textbf{Hyper-V} bietet sich an, wenn bereits Windows-Server-Lizenzen vorhanden sind und die Umgebung hauptsächlich aus Windows-VMs besteht.
+  \item \textbf{VirtualBox / VMware Workstation} eignen sich für Entwicklungsrechner, Schulungsumgebungen und schnelle lokale Tests.
+\end{itemize}
+
+
+
+\chapter{Hardware für Proxmox}
+
+\section{CPU}
+Proxmox VE benötigt eine 64-Bit-CPU mit Hardwarevirtualisierungs-Unterstützung. Bei Intel-Prozessoren heißt diese Funktion \textbf{VT-x} (Virtualization Technology), bei AMD-Prozessoren \textbf{AMD-V} (SVM). Diese Erweiterungen können im BIOS/UEFI aktiviert werden, sind aber auf modernen Prozessoren oft bereits standardmäßig eingeschaltet.
+
+Typische CPU-Empfehlungen für Proxmox-Server:
+\begin{itemize}
+  \item \textbf{Einstieg / Homelab}: Intel Core i5/i7 der aktuellen Generation, AMD Ryzen 5/7 -- viele Kerne für gleichzeitige VMs
+  \item \textbf{Kleiner Produktivserver}: Intel Xeon E-Serie (z.\,B.\ E-2300), AMD EPYC Embedded
+  \item \textbf{Unternehmensserver}: Intel Xeon Scalable (Gold/Platinum), AMD EPYC -- mehr Kerne, ECC-RAM-Unterstützung, IPMI
+\end{itemize}
+
+Für ZFS-Nutzung sollte die CPU über genügend Kerne und AES-NI-Unterstützung verfügen, da ZFS rechenintensiv sein kann.
+
+\section{Arbeitsspeicher (RAM)}
+RAM ist in einer Virtualisierungsumgebung oft der erste Engpass, da jede VM ihren eigenen zugewiesenen Speicher benötigt.
+
+\begin{itemize}
+  \item \textbf{Absolutes Minimum}: 8\,GB (nur für Tests, sehr wenige VMs)
+  \item \textbf{Empfehlung Homelab}: 32\,GB
+  \item \textbf{Produktivbetrieb}: 64\,GB und mehr, je nach Anzahl und Größe der VMs
+  \item \textbf{ECC-RAM}: im Serverbereich dringend empfohlen, besonders bei ZFS -- Bitfehler im RAM können bei ZFS zu Datenverlust führen
+\end{itemize}
+
+Proxmox unterstützt Ballooning: VMs geben nicht genutzten RAM temporär an den Host zurück, was die Gesamtausnutzung verbessert.
+
+\section{Speicher}
+Die Wahl des Speichermediums beeinflusst Leistung und Ausfallsicherheit erheblich.
+
+\begin{itemize}
+  \item \textbf{SSD}: empfohlen für das Proxmox-Betriebssystem und VM-Festplatten; deutlich schneller als HDDs
+  \item \textbf{NVMe}: für maximale Performance, besonders bei vielen gleichzeitigen I/O-Zugriffen
+  \item \textbf{HDD}: für große Datenspeicher (Backups, ISO-Images) geeignet, aber langsam für VM-Festplatten
+  \item \textbf{ZFS}: Proxmox bringt sehr gute ZFS-Unterstützung mit. ZFS übernimmt RAID, Kompression, Snapshots und Integritätsprüfung direkt im Dateisystem. Für ZFS werden mindestens zwei Festplatten sowie ausreichend RAM (1\,GB RAM pro 1\,TB Speicher als Faustregel) empfohlen.
+\end{itemize}
+
+\section{Netzwerk}
+\begin{itemize}
+  \item \textbf{Mindestens eine Netzwerkkarte}: 1\,GbE reicht für den Einstieg, 10\,GbE ist für Produktivumgebungen empfehlenswert
+  \item \textbf{Mehrere NICs}: ermöglichen die Trennung von Management-Traffic, VM-Traffic und Storage-Traffic in separate Netzwerke
+  \item \textbf{Bonding / LACP}: Zusammenschluss mehrerer Netzwerkports für mehr Durchsatz oder Redundanz
+  \item \textbf{VLAN-Unterstützung}: Proxmox kann VLANs über Linux-Bridges konfigurieren, um VMs in verschiedene Netzwerke zu segmentieren
+\end{itemize}
+
+\section{Fernverwaltung (IPMI / iDRAC / iLO)}
+Im Servereinsatz ist ein \textbf{Baseboard Management Controller (BMC)} unverzichtbar. Er erlaubt den Zugriff auf den Server auch dann, wenn das Betriebssystem nicht mehr reagiert:
+
+\begin{itemize}
+  \item \textbf{IPMI}: offener Standard, auf vielen Serverboards vorhanden
+  \item \textbf{iDRAC} (Dell) und \textbf{iLO} (HPE): herstellerspezifische Implementierungen mit zusätzlichen Funktionen wie virtueller Konsole und Remote-Boot
+\end{itemize}
+
+Für Homelab-Setups mit Consumer-Hardware kann \textbf{PiKVM} oder ein einfacher USB-KVM-Switch eine kostengünstige Alternative sein.
+
+
+
+\chapter{RAID-Grundlagen}
+
+\section{Was ist RAID?}
+\textbf{RAID} (Redundant Array of Independent Disks) bezeichnet die Kombination mehrerer physischer Festplatten zu einem logischen Verbund. Damit werden zwei Ziele verfolgt:
+
+\begin{itemize}
+  \item \textbf{Ausfallsicherheit (Redundanz)}: Der Verbund überlebt den Ausfall einer oder mehrerer Festplatten ohne Datenverlust.
+  \item \textbf{Leistungssteigerung}: Lese- und Schreibzugriffe können auf mehrere Platten verteilt werden.
+\end{itemize}
+
+Wichtig: RAID ist \textbf{kein Backup}. Es schützt vor dem physischen Ausfall einer Festplatte, aber nicht vor versehentlichem Löschen, Ransomware oder Controller-Defekten. Regelmäßige Backups bleiben unverzichtbar.
+
+\section{RAID-Level im Überblick}
+
+\textbf{RAID~0 -- Striping}:
+\begin{itemize}
+  \item Daten werden auf alle Festplatten verteilt (gestreift)
+  \item Maximale Leistung, keine Redundanz
+  \item Fällt eine Platte aus, sind alle Daten verloren
+  \item Geeignet für temporäre Daten oder Cache, nicht für produktive Systeme
+\end{itemize}
+
+\textbf{RAID~1 -- Mirroring}:
+\begin{itemize}
+  \item Daten werden auf mindestens zwei Platten gespiegelt
+  \item Hohe Ausfallsicherheit: Eine Platte darf ausfallen
+  \item Nutzbarer Speicher: 50\,\% der Gesamtkapazität
+  \item Gut geeignet für Systemplatte und kritische Daten
+\end{itemize}
+\newpage
+\textbf{RAID~5 -- Striping mit Parität}:
+\begin{itemize}
+  \item Mindestens drei Festplatten, Paritätsdaten werden verteilt gespeichert
+  \item Eine Platte darf ausfallen, ohne Datenverlust
+  \item Nutzbarer Speicher: Gesamtkapazität minus einer Platte
+  \item Guter Kompromiss zwischen Leistung, Kapazität und Redundanz
+\end{itemize}
+
+\textbf{RAID~6 -- Striping mit doppelter Parität}:
+\begin{itemize}
+  \item Mindestens vier Festplatten, zwei Paritätssätze
+  \item Zwei Platten dürfen gleichzeitig ausfallen
+  \item Geringere Schreibleistung als RAID~5 durch aufwändigere Parität
+  \item Empfohlen bei großen Arrays mit vielen Platten
+\end{itemize}
+
+\textbf{RAID~10 -- Kombination aus RAID~1 und RAID~0}:
+\begin{itemize}
+  \item Mindestens vier Festplatten (gespiegelte Striping-Paare)
+  \item Hohe Leistung und gute Ausfallsicherheit
+  \item Nutzbarer Speicher: 50\,\% der Gesamtkapazität
+  \item Beliebt für Datenbankserver und hochperformante Systeme
+\end{itemize}
+\newpage
+\section{Hardware-RAID und Software-RAID}
+Bei einem \textbf{Hardware-RAID} übernimmt ein dedizierter RAID-Controller die Verwaltung des Arrays. Für das Betriebssystem erscheint der Verbund als einzelne logische Festplatte. Hardware-RAID-Controller verfügen oft über einen eigenen Cache mit Batterie-Backup für bessere Schreibleistung.
+
+\textbf{Software-RAID} wird vom Betriebssystem verwaltet, ohne spezielle Hardware. In Proxmox VE wird dies meist durch \textbf{ZFS} (ZFS RAID, auch \textit{RAIDZ} genannt) realisiert. ZFS bietet neben RAID auch:
+\begin{itemize}
+  \item automatische Integritätsprüfung aller Daten (Checksummen)
+  \item transparente Kompression
+  \item effiziente Snapshots
+  \item Copy-on-Write-Mechanismus verhindert Datenverlust bei Schreibfehlern
+\end{itemize}
+
+Für neue Proxmox-Installationen wird ZFS als Software-RAID-Lösung empfohlen, weil es tief in Proxmox integriert ist und keinen zusätzlichen RAID-Controller erfordert.
+
+
+
+\chapter{Installationsanleitung}
+
+\section{ISO herunterladen}
+Das aktuelle Proxmox-VE-ISO ist kostenlos auf der offiziellen Website erhältlich:
+\begin{itemize}
+  \item \href{https://www.proxmox.com/de/downloads}{https://www.proxmox.com/de/downloads}
+\end{itemize}
+
+Die ISO-Datei trägt einen Namen wie \texttt{proxmox-ve\_9.x-x.iso}. Es empfiehlt sich, nach dem Download die angegebene SHA256-Prüfsumme zu verifizieren, um die Integrität der Datei sicherzustellen.
+
+\section{Bootfähigen USB-Stick erstellen}
+Ein USB-Stick mit mindestens 2\,GB Kapazität wird benötigt. Das ISO muss als bootfähiges Medium auf den Stick geschrieben werden -- einfaches Kopieren reicht nicht aus.
+
+\textbf{Unter Windows mit Rufus}:
+\begin{enumerate}
+  \item Rufus herunterladen: \href{https://rufus.ie}{https://rufus.ie}
+  \item Rufus starten (keine Installation notwendig)
+  \item Unter \textit{Laufwerk} den USB-Stick auswählen
+  \item Unter \textit{Boot-Auswahl} das Proxmox-ISO auswählen
+  \item Partitionsschema: \texttt{GPT} (für UEFI) oder \texttt{MBR} (für ältere BIOS-Systeme)
+  \item Auf \textit{Start} klicken -- alle vorhandenen Daten auf dem Stick werden gelöscht
+  \item Es werden Administratorrechte benötigt.
+\end{enumerate}
+
+
+\section{BIOS/UEFI vorbereiten}
+Vor dem Start des Installers müssen im BIOS/UEFI des Zielrechners einige Einstellungen überprüft werden:
+
+\begin{enumerate}
+  \item \textbf{Boot-Reihenfolge}: USB-Stick als erstes Bootmedium einstellen
+  \item \textbf{Virtualisierung aktivieren}: \texttt{Intel VT-x} bzw.\ \texttt{AMD-V (SVM)} muss aktiviert sein
+  \item \textbf{Secure Boot}: für Proxmox VE typischerweise deaktivieren, da der Kernel nicht standardmäßig signiert ist
+  \item \textbf{RAID-Controller}: Falls ein Hardware-RAID-Controller vorhanden ist, das Array dort vorher konfigurieren. Soll ZFS (Software-RAID) verwendet werden, müssen die Festplatten als Einzellaufwerke sichtbar sein (AHCI/IT-Modus).
+\end{enumerate}
+
+\section{Proxmox VE installieren}
+Nach dem Booten vom USB-Stick erscheint das Installationsmenü:
+
+\begin{enumerate}
+  \item \textbf{Installationsart wählen}: \texttt{Install Proxmox VE (Graphical)} für die geführte grafische Installation
+  \item \textbf{EULA akzeptieren}
+  \item \textbf{Zieldatenträger und Dateisystem wählen}:
+    \begin{itemize}
+      \item \texttt{ext4} oder \texttt{xfs}: einfache Dateisysteme für einzelne Festplatten
+      \item \texttt{ZFS (RAID0/1/10/RAIDZ-1/2/3)}: empfohlen bei mehreren Festplatten; die gewünschte RAID-Konfiguration und die Platten werden hier ausgewählt
+    \end{itemize}
+  \item \textbf{Standort und Zeitzone} einstellen, z.\,B.\ \texttt{Europe/Vienna}
+  \item \textbf{Passwort und E-Mail-Adresse} für den \texttt{root}-Benutzer festlegen
+  \item \textbf{Netzwerk konfigurieren}:
+    \begin{itemize}
+      \item Netzwerkschnittstelle auswählen (Management-Interface)
+      \item \textbf{Hostname} (FQDN) eintragen, z.\,B.\ \texttt{pve01.local}
+      \item IP-Adresse, Subnetzmaske, Gateway und DNS-Server eintragen
+    \end{itemize}
+  \item \textbf{Zusammenfassung prüfen} und Installation mit \textit{Install} starten
+  \item Der Rechner startet nach der Installation neu -- USB-Stick vorher entfernen
+\end{enumerate}
+
+\section{Erster Login im Webinterface}
+Nach dem Neustart ist Proxmox VE über den Browser erreichbar:
+\begin{itemize}
+  \item URL: \texttt{https://<IP-Adresse>:8006}
+  \item Benutzername: \texttt{root}
+  \item Authentifizierungsbereich: \texttt{Linux PAM standard authentication}
+  \item Passwort: das während der Installation gewählte Root-Passwort
+\end{itemize}
+
+Der Browser zeigt eine Zertifikatswarnung, weil Proxmox ein selbst signiertes Zertifikat verwendet. Diese Warnung kann für den internen Gebrauch akzeptiert werden. Für den Produktivbetrieb empfiehlt sich ein gültiges Zertifikat, z.\,B.\ über \textit{Let's Encrypt} (im Proxmox-Webinterface direkt konfigurierbar).
+
+\section{Subscription-Hinweis und freie Paketquellen}
+Nach dem ersten Login erscheint ein Hinweis, dass keine Subscription vorhanden ist. Dieser Hinweis kann in den meisten Fällen ignoriert werden. Für den Heimgebrauch und Schulungsumgebungen stehen die freien Paketquellen zur Verfügung.
+
+Um das Enterprise-Repository zu deaktivieren und das freie Community-Repository zu aktivieren, werden folgende Schritte in der Shell (\texttt{pve} $\rightarrow$ \textit{Shell} im Webinterface) ausgeführt:
+
+\begin{enumerate}
+  \item Enterprise-Repository deaktivieren:
+  \begin{itemize}
+    \item \texttt{echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" >}\\
+          \texttt{/etc/apt/sources.list.d/pve-community.list}
+    \item \texttt{echo ""\,> /etc/apt/sources.list.d/pve-enterprise.list}
+  \end{itemize}
+  \item Ceph-Enterprise-Repository (falls nicht benötigt) ebenso deaktivieren:
+  \begin{itemize}
+    \item \texttt{echo ""\,> /etc/apt/sources.list.d/ceph.list}
+  \end{itemize}
+  \item System aktualisieren:
+  \begin{itemize}
+    \item \texttt{apt update \&\& apt dist-upgrade -y}
+  \end{itemize}
+\end{enumerate}
+
+
+
+\chapter{Erste Schritte nach der Installation}
+
+\section{System aktuell halten}
+Regelmäßige Updates sind für die Sicherheit und Stabilität des Proxmox-Hosts essenziell. Updates können entweder über das Webinterface (\textit{Knoten} $\rightarrow$ \textit{Updates}) oder über die Shell eingespielt werden:
+\begin{itemize}
+  \item \texttt{apt update \&\& apt dist-upgrade -y}
+\end{itemize}
+
+Nach Kernel-Updates ist ein Neustart erforderlich. Proxmox zeigt im Webinterface einen entsprechenden Hinweis an.
+
+\section{ISO-Images hochladen}
+Um VMs mit einem Betriebssystem zu installieren, werden ISO-Images benötigt. Diese werden im Webinterface hochgeladen:
+
+\begin{enumerate}
+  \item Im linken Baum den Speicher auswählen, z.\,B.\ \texttt{local}
+  \item Auf \textit{ISO Images} klicken
+  \item \textit{Upload} für eine lokale Datei oder \textit{Download from URL} für direkten Download
+\end{enumerate}
+
+\section{Erste virtuelle Maschine anlegen}
+\begin{enumerate}
+  \item Oben rechts auf \textit{Create VM} klicken
+  \item \textbf{General}: VM-ID und Name vergeben
+  \item \textbf{OS}: ISO-Image auswählen und Betriebssystemtyp festlegen (z.\,B.\ \texttt{Microsoft Windows} oder \texttt{Linux})
+  \item \textbf{System}: BIOS und Maschinentyp auswählen -- für moderne Systeme \texttt{OVMF (UEFI)} und \texttt{q35} empfohlen
+  \item \textbf{Disks}: Festplattengröße und Speicher-Backend wählen
+  \item \textbf{CPU}: Anzahl der virtuellen Kerne zuweisen
+  \item \textbf{Memory}: RAM-Menge in MiB festlegen
+  \item \textbf{Network}: Netzwerkbrücke auswählen (standardmäßig \texttt{vmbr0})
+  \item Auf \textit{Finish} klicken, VM erscheint im linken Baum
+  \item VM starten: im linken Baum anklicken, dann \textit{Start}
+  \item Über \textit{Console} die grafische Ausgabe der VM aufrufen und das Betriebssystem installieren
+\end{enumerate}
+
+\section{Netzwerkbrücken verstehen}
+Proxmox verwendet \textbf{Linux Bridges} für die VM-Vernetzung. Standardmäßig wird während der Installation die Bridge \texttt{vmbr0} angelegt, die mit dem physischen Netzwerkport verbunden ist. VMs, die dieser Bridge zugewiesen werden, sind im selben Netzwerk wie der Proxmox-Host erreichbar.
+
+Weitere Bridges können für isolierte Netzwerke, VLANs oder separate Subnetzwerke angelegt werden. Die Konfiguration erfolgt im Webinterface unter \textit{Knoten} $\rightarrow$ \textit{Netzwerk}.
+
+\section{Backups einrichten}
+Proxmox VE bringt einen integrierten Backup-Mechanismus mit. Backups können manuell oder zeitgesteuert erstellt werden:
+\begin{itemize}
+  \item \textbf{Manuell}: VM auswählen $\rightarrow$ \textit{Backup} $\rightarrow$ \textit{Backup now}
+  \item \textbf{Geplant}: Im Rechenzentrum-Bereich unter \textit{Backup} einen Zeitplan anlegen
+  \item \textbf{Backup-Speicher}: Backups können lokal, auf einem NFS-/SMB-Share oder auf einem \textit{Proxmox Backup Server} gespeichert werden
+\end{itemize}
+
+Drei Backup-Modi stehen zur Verfügung:
+\begin{itemize}
+  \item \textbf{Stop}: VM wird kurz gestoppt -- konsistenteste Methode, aber kurze Downtime
+  \item \textbf{Suspend}: VM wird eingefroren, Backup erstellt, danach weiter -- kurze Pause sichtbar
+  \item \textbf{Snapshot}: laufende VM wird gesichert -- keine Downtime, aber unter Umständen weniger konsistent
+\end{itemize}
+
+\section{Snapshots nutzen}
+Snapshots speichern den aktuellen Zustand einer VM zu einem bestimmten Zeitpunkt. Sie sind besonders nützlich, bevor an einer VM Änderungen vorgenommen werden (Updates, Konfigurationsänderungen):
+\begin{itemize}
+  \item VM auswählen $\rightarrow$ \textit{Snapshots} $\rightarrow$ \textit{Take Snapshot}
+  \item Einen beschreibenden Namen vergeben, z.\,B.\ \texttt{vor-update-2026-04}
+  \item Bei Problemen kann der frühere Zustand mit \textit{Rollback} wiederhergestellt werden
+\end{itemize}
+
+Snapshots sind kein Ersatz für Backups, da sie auf denselben Festplatten wie die VM liegen.
+
+
+\end{document}

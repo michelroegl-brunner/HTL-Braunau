@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1776089981.36358 "c:/Users/michel.roegl-brunner/Desktop/Projects/HTL-Braunau/Work/Templates/Styling/main.tex" "main.pdf" "main" 1776089982.99446 0
+["pdflatex"] 1776692076.10045 "c:/Users/michel.roegl-brunner/Desktop/Projects/HTL-Braunau/Work/Templates/Styling/main.tex" "main.pdf" "main" 1776692079.14518 0
   "c:/Users/michel.roegl-brunner/Desktop/Projects/HTL-Braunau/Work/Templates/Styling/main.tex" 1776087705 233 2b8b10a9029b35aeae9f60ce04aad3e8 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/archivo/a_utd4ik.enc" 1775657862 2990 29cc7c06040deb9467613da80fc09e83 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1775660784 2375 baa924870cfb487815765f9094cf3728 ""
@@ -161,13 +161,13 @@
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1775664182 5619402 045890036aad9b52b154ef5568e59d3a ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1775664306 3648450 c7363b3d3c564551ffae6b433e8ccddf ""
   "c:/texlive/2026/texmf.cnf" 1775664161 713 e69b156964470283e0530f5060668171 ""
-  "deckblatt.tex" 1776081892 716 1eecbf6b8c46661d707cb6fbfee71b72 ""
+  "deckblatt.tex" 1776432005 746 0d2dc159b16f3339e2b9c4888cdad21c ""
   "htl-bildung-mit-zukunft.png" 1775826988 2573 c17a74eae70cab721c5c80acad55ff1c ""
   "htl_c_cmyk_rein.pdf" 1775826175 246318 b4da8c72c01ae1a5572d1371b834255a ""
-  "main.aux" 1776089982 446 cad410ee3bf1ffcd419a9de9ba469fad "pdflatex"
+  "main.aux" 1776692079 446 cad410ee3bf1ffcd419a9de9ba469fad "pdflatex"
   "main.tex" 1776087705 233 2b8b10a9029b35aeae9f60ce04aad3e8 ""
-  "main.toc" 1776089982 94 8cdf788ffa653d93c1a57e129e95aeb0 "pdflatex"
-  "style.sty" 1776087705 2954 e0a3c977bbbe9751bc547442b5b54755 ""
+  "main.toc" 1776692079 94 8cdf788ffa653d93c1a57e129e95aeb0 "pdflatex"
+  "style.sty" 1776691190 3077 03dabef5fafdee6e0ef818ed2ea1c83d ""
   (generated)
   "main.aux"
   "main.log"

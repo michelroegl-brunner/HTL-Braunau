@@ -68,6 +68,24 @@
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
+% Medium compact global heading spacing (KOMA-Script).
+\RedeclareSectionCommand[
+  beforeskip=0.9\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip,
+  afterskip=0.7\baselineskip plus 0.1\baselineskip
+]{chapter}
+\RedeclareSectionCommand[
+  beforeskip=1.2\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip,
+  afterskip=0.55\baselineskip plus 0.1\baselineskip
+]{section}
+\RedeclareSectionCommand[
+  beforeskip=0.95\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip,
+  afterskip=0.45\baselineskip plus 0.1\baselineskip
+]{subsection}
+\RedeclareSectionCommand[
+  beforeskip=0.8\baselineskip plus 0.2\baselineskip minus 0.2\baselineskip,
+  afterskip=0.4\baselineskip plus 0.1\baselineskip
+]{subsubsection}
+
 
 \usepackage{multicol} % für mehrspaltige Texte
 

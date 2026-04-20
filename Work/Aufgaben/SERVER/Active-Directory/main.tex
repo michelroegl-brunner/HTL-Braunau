@@ -1,0 +1,622 @@
+\documentclass[11pt, oneside, numbers=noenddot]{scrbook}
+
+\usepackage{style}
+
+\def\Title{Active Directory}
+\def\Subtitle{Grundlagen, Einrichtung und Verwaltung}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{mauve}\bfseries,
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  showstringspaces=false,
+  tabsize=2,
+}
+
+\begin{document}
+\input{deckblatt.tex}
+\tableofcontents
+\pagenumbering{arabic}
+
+
+
+\chapter{Grundlagen Active Directory}
+
+\section{Was ist Active Directory?}
+\textbf{Active Directory (AD)} ist ein von Microsoft entwickelter Verzeichnisdienst, der erstmals mit Windows Server 2000 eingeführt wurde. Ein Verzeichnisdienst ist ein zentraler Speicher für Informationen über Objekte in einem Netzwerk -- Benutzer, Computer, Drucker, Gruppen und viele weitere Ressourcen -- und stellt Mechanismen zur Authentifizierung und Autorisierung bereit.
+
+Active Directory basiert auf dem offenen Protokoll \textbf{LDAP} (Lightweight Directory Access Protocol) und nutzt \textbf{Kerberos} als primäres Authentifizierungsprotokoll. Ergänzend wird \textbf{DNS} (Domain Name System) intensiv genutzt: Ohne funktionierenden DNS-Dienst arbeitet Active Directory nicht zuverlässig.
+
+In der Praxis ist Active Directory der De-facto-Standard für das Identitäts- und Zugriffsmanagement in Windows-basierten Unternehmensumgebungen. Es findet sich in nahezu jeder Organisation, die mehr als ein Dutzend Windows-Rechner betreibt.
+
+\section{Kernkonzepte}
+
+\subsection{Domain}
+Eine \textbf{Domain} (Domäne) ist die grundlegende administrative Einheit in Active Directory. Sie bündelt alle Objekte -- Benutzer, Computer, Gruppen -- unter einem gemeinsamen Namensraum, z.\,B.\ \texttt{bannanenimport.local}. Innerhalb einer Domain gelten gemeinsame Sicherheitsrichtlinien.
+
+\subsection{Forest und Tree}
+Mehrere Domains können zu einer \textbf{Tree} (Baumstruktur) verbunden werden, wenn sie denselben DNS-Namensraum teilen. Mehrere Trees bilden zusammen einen \textbf{Forest} (Gesamtstruktur), der die oberste Sicherheitsgrenze in Active Directory darstellt. Für Schulungsumgebungen genügt in der Regel eine einzige Domain ohne Forest-Verbund.
+
+\subsection{Organisationseinheiten (OUs)}
+\textbf{Organisationseinheiten} (Organizational Units, OUs) sind Container innerhalb einer Domain, mit denen Objekte strukturiert und gruppiert werden. OUs spiegeln häufig die Unternehmensstruktur wider -- etwa nach Abteilungen oder Standorten. Auf OUs können gezielt \textbf{Gruppenrichtlinien} (GPOs) angewendet werden.
+
+\subsection{Benutzer und Gruppen}
+\textbf{Benutzerkonten} repräsentieren Personen oder Dienste und enthalten Anmeldeinformationen sowie Profildetails. \textbf{Gruppen} fassen mehrere Benutzer oder Computer zusammen und erleichtern die Verwaltung von Berechtigungen erheblich: Anstatt jedem einzelnen Benutzer Rechte zu erteilen, werden diese der Gruppe zugewiesen.
+
+Es gibt zwei Haupttypen von Gruppen:
+\begin{itemize}
+  \item \textbf{Sicherheitsgruppen}: für Berechtigungsverwaltung und Gruppenrichtlinien
+  \item \textbf{Verteilergruppen}: für E-Mail-Verteilerlisten, keine Berechtigungsverwaltung
+\end{itemize}
+
+Gruppen haben außerdem einen \textbf{Gültigkeitsbereich}:
+\begin{itemize}
+  \item \textbf{Lokal}: nur innerhalb der Domain nutzbar
+  \item \textbf{Global}: domainweit, kann in anderen Domains verwendet werden
+  \item \textbf{Universal}: forest-weit nutzbar
+\end{itemize}
+
+\subsection{Gruppenrichtlinien (GPO)}
+\textbf{Group Policy Objects (GPOs)} sind Richtlinienpakete, die auf Benutzer oder Computer angewendet werden. Sie steuern hunderte von Einstellungen: Passwortrichtlinien, Sperrbildschirm-Timeouts, Softwareverteilung, Netzlaufwerk-Mappings, Startskripte und vieles mehr. GPOs werden auf Ebene von Domain, Standort oder OU verknüpft.
+
+\subsection{Domain Controller}
+Der \textbf{Domain Controller (DC)} ist der zentrale Server, auf dem Active Directory läuft. Er authentifiziert Benutzer und Computer beim Anmelden, beantwortet LDAP-Anfragen und repliziert die AD-Datenbank bei mehreren DCs. In kleinen Umgebungen genügt ein einziger DC; für Produktivumgebungen empfehlen sich mindestens zwei für Ausfallsicherheit.
+
+\section{Einsatzgebiete}
+Active Directory wird in Unternehmen und Bildungseinrichtungen für eine Vielzahl von Aufgaben eingesetzt:
+
+\begin{itemize}
+  \item \textbf{Zentrales Benutzermanagement}: Benutzerkonten, Passwörter und Profilinformationen werden an einem Ort verwaltet. Ein Benutzer kann sich mit denselben Anmeldedaten an beliebigen Computern der Domain anmelden.
+  \item \textbf{Single Sign-On (SSO)}: Nach einer einmaligen Anmeldung am Betriebssystem haben Benutzer Zugriff auf alle Ressourcen, für die sie berechtigt sind -- ohne erneute Passwortabfrage.
+  \item \textbf{Netzwerkressourcen verwalten}: Drucker, Dateifreigaben und Anwendungen werden zentral bereitgestellt und den richtigen Benutzern und Gruppen zugewiesen.
+  \item \textbf{Sicherheitsrichtlinien}: GPOs erzwingen einheitliche Sicherheitseinstellungen auf allen Computern der Domain -- z.\,B.\ Mindestpasswortlänge, Bildschirmsperre oder deaktivierter USB-Zugriff.
+  \item \textbf{Softwareverteilung}: Anwendungen können automatisch auf Computern oder für Benutzer installiert werden.
+  \item \textbf{Audit und Compliance}: Anmeldevorgänge, Zugriffsversuche und administrative Änderungen werden protokolliert.
+\end{itemize}
+
+
+
+\chapter{Netzwerkplanung mit Proxmox}
+
+\section{Konzept: Isoliertes Labornetz}
+Für diese Übung wird ein vollständig isoliertes Netzwerk in Proxmox eingerichtet. Der Vorteil: Die VMs sind vom restlichen Netzwerk und vom Internet getrennt, was einerseits die Sicherheit erhöht und andererseits eine realistische Unternehmensumgebung simuliert, in der der Domain Controller alle Netzwerkdienste (DNS, DHCP) selbst übernimmt.
+
+Das Konzept sieht folgendermaßen aus:
+
+\begin{verbatim}
+  +------------------------------- Proxmox Host -------------------------------+
+  |                                                                            |
+  |   vmbr0 (mit physischer NIC)          vmbr1 (intern, kein Bridge-Port)     |
+  |   --> Internet / Schulnetz            --> isoliertes AD-Labornetz          |
+  |                                                                            |
+  |              +---------------+        +------------------+                 |
+  |              |     DC01      |        |    CLIENT01      |                 |
+  |              | Windows Srv   |        | Windows 10/11    |                 |
+  |              | 192.168.100.1 |        | 192.168.100.x    |                 |
+  |              |  (DHCP, DNS)  |        |  (via DHCP)      |                 |
+  |              +-------+-------+        +--------+---------+                 |
+  |                      |                         |                           |
+  |                      +----------vmbr1----------+                           |
+  |                                                                            |
+  +----------------------------------------------------------------------------+
+\end{verbatim}
+
+Der Domain Controller \texttt{DC01} erhält eine feste IP-Adresse und betreibt gleichzeitig den DNS- und DHCP-Dienst für das interne Netz. Der Windows-Client \texttt{CLIENT01} bekommt seine IP-Konfiguration automatisch per DHCP.
+
+\section{IP-Adressplan}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Gerät} & \textbf{IP-Adresse} & \textbf{Bemerkung} \\
+\hline
+DC01 (Domain Controller) & \texttt{192.168.100.1} & statisch, Gateway + DNS \\
+DHCP-Bereich (Clients) & \texttt{192.168.100.50 -- 192.168.100.150} & dynamisch per DHCP \\
+CLIENT01 & \texttt{192.168.100.50} (Beispiel) & per DHCP zugewiesen \\
+Subnetzmaske & \texttt{255.255.255.0} & \texttt{/24} \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Proxmox: Interne Bridge \texttt{vmbr1} anlegen}
+Damit das isolierte Netz funktioniert, muss in Proxmox eine zweite Linux-Bridge ohne physischen Netzwerkport angelegt werden:
+
+\begin{enumerate}
+  \item Im Proxmox-Webinterface den Knoten (Server) im linken Baum auswählen
+  \item Auf \textit{Netzwerk} klicken
+  \item Oben auf \textit{Erstellen} $\rightarrow$ \textit{Linux Bridge} klicken
+  \item Folgende Einstellungen vornehmen:
+  \begin{itemize}
+    \item \textbf{Name}: \texttt{vmbr1}
+    \item \textbf{Bridge-Ports}: \textit{leer lassen} (kein physischer Port -- rein intern)
+    \item \textbf{VLAN aware}: optional, für diese Übung nicht notwendig
+    \item Kommentar: \texttt{AD-Labornetz intern}
+  \end{itemize}
+  \item Auf \textit{Erstellen} klicken, dann oben auf \textit{Änderungen übernehmen}
+\end{enumerate}
+
+Die neue Bridge \texttt{vmbr1} erscheint nun in der Netzwerkliste und steht beim Erstellen von VMs als Netzwerkschnittstelle zur Verfügung.
+
+\section{Übersicht der virtuellen Maschinen}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\textbf{VM-Name} & \textbf{Betriebssystem} & \textbf{vCPU} & \textbf{RAM} & \textbf{Disk} \\
+\hline
+DC01 & Windows Server 2022 & 2 & 4\,GB & 60\,GB \\
+CLIENT01 & Windows 10 / 11 & 2 & 4\,GB & 50\,GB \\
+\hline
+\end{tabular}
+\end{center}
+
+Beide VMs werden ausschließlich mit \texttt{vmbr1} verbunden. Ein zusätzlicher Netzwerkadapter an \texttt{vmbr0} ist für diese Aufgabe nicht erforderlich.
+
+
+
+\chapter{Aufgabenstellung}
+
+\section{Aufgabe 1: Proxmox-VM für den Domain Controller anlegen}
+
+\subsection*{Ziel}
+Eine virtuelle Maschine für den späteren Windows Server / Domain Controller wird in Proxmox erstellt.
+
+\subsection*{Voraussetzungen}
+\begin{itemize}
+  \item Proxmox VE ist installiert und erreichbar
+  \item Die interne Bridge \texttt{vmbr1} wurde wie in Kapitel~2 beschrieben angelegt
+  \item Ein Windows-Server-2022-ISO ist auf dem Proxmox-Speicher vorhanden\\
+        (ISO-Upload: Speicher \texttt{local} $\rightarrow$ \textit{ISO Images} $\rightarrow$ \textit{Upload})
+\end{itemize}
+
+\subsection*{Aufgabe}
+\begin{enumerate}
+  \item Klicke oben rechts im Proxmox-Webinterface auf \textit{VM erstellen}
+  \item Konfiguriere die VM mit folgenden Einstellungen:
+  \begin{itemize}
+    \item \textbf{Allgemein}: Name \texttt{DC01}, VM-ID nach Wahl (z.\,B.\ \texttt{100})
+    \item \textbf{OS}: Windows-Server-2022-ISO auswählen, Typ \texttt{Microsoft Windows}, Version \texttt{11/2022}
+    \item \textbf{System}: BIOS \texttt{OVMF (UEFI)}, Maschine \texttt{q35}, TPM 2.0 hinzufügen (für Windows Server 2022 empfohlen)
+    \item \textbf{Festplatten}: 60\,GB, Bus/Gerät \texttt{VirtIO SCSI}, Storage nach Verfügbarkeit
+    \item \textbf{CPU}: 2 Kerne, Typ \texttt{host}
+    \item \textbf{Speicher}: 4096\,MiB (4\,GB)
+    \item \textbf{Netzwerk}: Bridge \texttt{vmbr1}, Modell \texttt{VirtIO (paravirtualized)}
+  \end{itemize}
+  \item Auf \textit{Fertigstellen} klicken -- die VM erscheint im linken Baum
+  \item Erstelle vor dem ersten Start einen Snapshot: VM auswählen $\rightarrow$ \textit{Snapshots} $\rightarrow$ \textit{Snapshot aufnehmen}, Name: \texttt{leer-vor-installation}
+  \item Starte die VM und öffne die Konsole über \textit{Console}
+\end{enumerate}
+
+\subsection*{Hinweis}
+VirtIO-Treiber werden von Windows während der Installation möglicherweise nicht erkannt. In diesem Fall muss zusätzlich eine zweite virtuelle CD mit dem \textbf{VirtIO-Treiber-ISO} (kostenlos von \href{https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/}{fedorapeople.org}) eingebunden werden, damit der Festplatten- und Netzwerktreiber gefunden wird.
+
+\newpage
+
+\section{Aufgabe 2: Windows Server installieren und Domain Controller promoten}
+
+\subsection*{Ziel}
+Windows Server 2022 wird installiert, mit einer statischen IP-Adresse konfiguriert, und der Server wird zum Domain Controller der Domain \texttt{bannanenimport.local} befördert.
+
+\subsection*{Aufgabe -- Teil A: Windows Server installieren}
+\begin{enumerate}
+  \item Starte die VM \texttt{DC01} und starte die Windows-Server-2022-Installation über die Konsole
+  \item Wähle \textbf{Windows Server 2022 Standard (Desktop Experience)} -- die Version mit grafischer Oberfläche
+  \item Wähle \textit{Benutzerdefinierte Installation}, wähle das virtuelle Laufwerk aus (VirtIO-Treiber ggf.\ nachladen)
+  \item Vergib ein sicheres Administratorpasswort
+  \item Nach dem ersten Anmelden: Computernamen auf \texttt{DC01} ändern\\
+        (\textit{Systemsteuerung} $\rightarrow$ \textit{System} $\rightarrow$ \textit{Computername ändern}) und neu starten
+\end{enumerate}
+
+\subsection*{Aufgabe -- Teil B: Statische IP-Adresse setzen}
+\begin{enumerate}
+  \item Öffne \textit{Netzwerk- und Freigabecenter} $\rightarrow$ \textit{Adaptereinstellungen}
+  \item Rechtsklick auf den Ethernet-Adapter $\rightarrow$ \textit{Eigenschaften} $\rightarrow$ \textit{Internet Protocol Version 4 (TCP/IPv4)}
+  \item Setze folgende Werte:
+  \begin{itemize}
+    \item IP-Adresse: \texttt{192.168.100.1}
+    \item Subnetzmaske: \texttt{255.255.255.0}
+    \item Standardgateway: \textit{leer lassen} (kein Internet in diesem Netz)
+    \item Bevorzugter DNS: \texttt{127.0.0.1} 
+  \end{itemize}
+\end{enumerate}
+
+\subsection*{Aufgabe -- Teil C: AD DS-Rolle installieren und DC promoten}
+\begin{enumerate}
+  \item Öffne den \textbf{Server-Manager} $\rightarrow$ \textit{Rollen und Features hinzufügen}
+  \item Wähle \textit{Rollenbasierte oder featurebasierte Installation}
+  \item Wähle \textbf{Active Directory Domain Services} (AD DS) -- weitere Features werden automatisch vorgeschlagen, bestätigen
+  \item Installiere die Rolle und klicke danach auf das Warndreieck im Server-Manager: \textit{Diesen Server zu einem Domänencontroller heraufstufen}
+  \item Im Konfigurationsassistenten:
+  \begin{itemize}
+    \item \textbf{Neue Gesamtstruktur hinzufügen}
+    \item Root-Domänenname: \texttt{bannanenimport.local}
+    \item Funktionsebene: \textit{Windows Server 2016} oder höher
+    \item DNS-Server und Globaler Katalog: aktiviert lassen
+    \item DSRM-Passwort (Directory Services Restore Mode) vergeben und notieren
+  \end{itemize}
+  \item Installation abschließen -- der Server startet automatisch neu
+  \item Nach dem Neustart mit \texttt{BANANENIMPORT\textbackslash Administrator} anmelden
+\end{enumerate}
+
+\subsection*{Snapshot empfohlen}
+Erstelle nach erfolgreichem DC-Promote einen Snapshot in Proxmox: \texttt{dc-promote-fertig}
+
+\newpage
+
+\section{Aufgabe 3: DHCP-Server einrichten}
+
+\subsection*{Ziel}
+Der Domain Controller übernimmt auch den DHCP-Dienst für das interne Netz, sodass Windows-Clients automatisch eine IP-Adresse erhalten.
+
+\subsection*{Aufgabe}
+\begin{enumerate}
+  \item Öffne den \textbf{Server-Manager} $\rightarrow$ \textit{Rollen und Features hinzufügen}
+  \item Wähle die Rolle \textbf{DHCP-Server} und installiere sie
+  \item Nach der Installation: Warndreieck im Server-Manager $\rightarrow$ \textit{DHCP-Konfiguration abschließen} $\rightarrow$ Autorisierung mit dem Domain-Administratorkonto bestätigen
+  \item Öffne das \textbf{DHCP-Verwaltungstool} (\textit{Start} $\rightarrow$ \textit{DHCP})
+  \item Lege einen neuen Bereich (Scope) an:
+  \begin{itemize}
+    \item Rechtsklick auf \textit{IPv4} $\rightarrow$ \textit{Neuer Bereich}
+    \item Name: \texttt{AD-Labornetz}
+    \item Startadresse: \texttt{192.168.100.50}
+    \item Endadresse: \texttt{192.168.100.150}
+    \item Subnetzmaske: \texttt{255.255.255.0}
+    \item Ausschlüsse: keine (oder \texttt{192.168.100.1} ist ohnehin außerhalb)
+    \item Leasedauer: Standard (8 Tage) oder kürzer für Laborumgebungen (z.\,B.\ 1 Tag)
+  \end{itemize}
+  \item Konfiguriere die \textbf{Bereichsoptionen}:
+  \begin{itemize}
+    \item \textbf{003 Router (Gateway)}: \texttt{192.168.100.1}
+    \item \textbf{006 DNS-Server}: \texttt{192.168.100.1}
+    \item \textbf{015 DNS-Domänenname}: \texttt{bannanenimport.local}
+  \end{itemize}
+  \item Aktiviere den Bereich (Scope aktivieren)
+\end{enumerate}
+
+
+\section{Aufgabe 4: Organisationseinheiten, Benutzer und Gruppen anlegen}
+
+\subsection*{Ziel}
+Die Unternehmensstruktur der fiktiven \textbf{Bananeimport Fruchticus GmbH} wird in Active Directory abgebildet. Es werden Organisationseinheiten, Sicherheitsgruppen und Benutzerkonten für vier Abteilungen angelegt.
+
+\subsection*{Unternehmensstruktur}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Abteilung} & \textbf{OU-Name} & \textbf{Gruppe} \\
+\hline
+IT-Abteilung & \texttt{IT} & \texttt{GRP\_IT} \\
+Buchhaltung & \texttt{Buchhaltung} & \texttt{GRP\_Buchhaltung} \\
+Vertrieb & \texttt{Vertrieb} & \texttt{GRP\_Vertrieb} \\
+Personal & \texttt{Personal} & \texttt{GRP\_Personal} \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Beispielbenutzer}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Anzeigename} & \textbf{Benutzername} & \textbf{Abteilung} \\
+\hline
+Anna Berger & \texttt{aberger} & IT \\
+Klaus Huber & \texttt{khuber} & IT \\
+Eva Maier & \texttt{emaier} & Buchhaltung \\
+Stefan Gruber & \texttt{sgruber} & Buchhaltung \\
+Lisa Wagner & \texttt{lwagner} & Vertrieb \\
+Markus Bauer & \texttt{mbauer} & Vertrieb \\
+Sandra Fischer & \texttt{sfischer} & Personal \\
+Thomas Müller & \texttt{tmueller} & Personal \\
+\hline
+\end{tabular}
+\end{center}
+ \newpage
+\subsection*{Aufgabe}
+\begin{enumerate}
+  \item Öffne \textbf{Active Directory-Benutzer und -Computer} (\textit{Start} $\rightarrow$ \textit{Windows-Verwaltungstools} $\rightarrow$ \textit{Active Directory-Benutzer und -Computer})
+  \item Lege unter \texttt{bannanenimport.local} eine übergeordnete OU \texttt{Bananenimport-Fruchticus} an:
+  \begin{itemize}
+    \item Rechtsklick auf \texttt{bannanenimport.local} $\rightarrow$ \textit{Neu} $\rightarrow$ \textit{Organisationseinheit}
+    \item Name: \texttt{Bananenimport-Fruchticus}, Häkchen bei \textit{Container vor versehentlichem Löschen schützen}
+  \end{itemize}
+  \item Lege unter \texttt{Bananenimport-Fruchticus} für jede Abteilung eine eigene OU an (\texttt{IT}, \texttt{Buchhaltung}, \texttt{Vertrieb}, \texttt{Personal})
+  \item Lege in jeder Abteilungs-OU eine \textbf{globale Sicherheitsgruppe} an:
+  \begin{itemize}
+    \item Rechtsklick auf OU $\rightarrow$ \textit{Neu} $\rightarrow$ \textit{Gruppe}
+    \item Name nach obiger Tabelle, Gruppenbereich \textit{Global}, Gruppentyp \textit{Sicherheit}
+  \end{itemize}
+  \item Lege für jeden Benutzer aus der Tabelle ein Konto an:
+  \begin{itemize}
+    \item Rechtsklick auf zugehörige OU $\rightarrow$ \textit{Neu} $\rightarrow$ \textit{Benutzer}
+    \item Vorname, Nachname und Anmeldenamen eintragen
+    \item Passwort setzen (z.\,B.\ \texttt{Bananenimport-Fruchticus2024!}), \textit{Benutzer muss Kennwort bei nächster Anmeldung ändern} aktivieren
+  \end{itemize}
+  \item Füge jeden Benutzer der entsprechenden Abteilungsgruppe hinzu:
+  \begin{itemize}
+    \item Doppelklick auf die Gruppe $\rightarrow$ Reiter \textit{Mitglieder} $\rightarrow$ \textit{Hinzufügen}
+    \item Benutzernamen eingeben und bestätigen
+  \end{itemize}
+\end{enumerate}
+
+\newpage
+\section{Aufgabe 5: Fileshares pro Abteilung einrichten}
+
+\subsection*{Ziel}
+Jede Abteilung erhält einen eigenen Netzwerkordner auf dem DC. Nur Mitglieder der jeweiligen Abteilungsgruppe dürfen auf den Ordner zugreifen.
+
+\subsection*{Aufgabe}
+\begin{enumerate}
+  \item Öffne den \textbf{Datei-Explorer} auf \texttt{DC01} und erstelle folgende Ordnerstruktur:
+  \begin{itemize}
+    \item \texttt{C:\textbackslash Shares\textbackslash IT}
+    \item \texttt{C:\textbackslash Shares\textbackslash Buchhaltung}
+    \item \texttt{C:\textbackslash Shares\textbackslash Vertrieb}
+    \item \texttt{C:\textbackslash Shares\textbackslash Personal}
+  \end{itemize}
+  \item Gib jeden Ordner als Netzwerkfreigabe frei:
+  \begin{itemize}
+    \item Rechtsklick auf Ordner $\rightarrow$ \textit{Eigenschaften} $\rightarrow$ Reiter \textit{Freigabe} $\rightarrow$ \textit{Erweiterte Freigabe}
+    \item Häkchen bei \textit{Diesen Ordner freigeben}, Freigabename z.\,B.\ \texttt{IT}, \texttt{Buchhaltung} usw.
+    \item Unter \textit{Berechtigungen}: \texttt{Jeder} entfernen, jeweilige Gruppe (\texttt{GRP\_IT} usw.) mit Berechtigung \textit{Ändern} hinzufügen
+  \end{itemize}
+  \item Setze zusätzlich die \textbf{NTFS-Berechtigungen} (Sicherheitsreiter):
+  \begin{itemize}
+    \item Klicke auf \textit{Bearbeiten} im Reiter \textit{Sicherheit}
+    \item Entferne \texttt{Benutzer} (falls vorhanden), behalte \texttt{Administratoren} und \texttt{SYSTEM}
+    \item Füge die jeweilige Gruppe hinzu: Berechtigung \textit{Ändern} (beinhaltet Lesen, Schreiben, Ausführen)
+  \end{itemize}
+  \item Überprüfe die Freigabe: Öffne auf einem anderen Computer (später \texttt{CLIENT01}) den Pfad \texttt{\textbackslash\textbackslash DC01\textbackslash IT} -- nur Benutzer aus \texttt{GRP\_IT} sollten Zugriff haben
+\end{enumerate}
+
+\newpage
+
+\section{Aufgabe 6: Logon-Skript pro Abteilung einrichten}
+
+\subsection*{Ziel}
+Jeder Benutzer soll beim Anmelden automatisch das Netzlaufwerk seiner Abteilung als Laufwerk \texttt{Z:} eingebunden bekommen. Dies wird über ein PowerShell-Skript realisiert, das per Gruppenrichtlinie (GPO) auf OU-Ebene angewendet wird.
+
+\subsection*{Aufgabe -- Teil A: Logon-Skripte erstellen}
+
+Erstelle für jede Abteilung ein eigenes PowerShell-Skript. Die Skripte werden im SYSVOL-Ordner gespeichert, damit alle Domaincomputer darauf zugreifen können.
+
+Speicherpfad auf dem DC:
+\begin{center}
+\texttt{C:\textbackslash Windows\textbackslash SYSVOL\textbackslash sysvol\textbackslash bannanenimport.local\textbackslash scripts\textbackslash}
+\end{center}
+
+Erstelle dort folgende vier Dateien:
+
+\textbf{Datei \texttt{logon\_IT.ps1}:}
+\begin{lstlisting}[language=sh, caption=Logon-Skript IT-Abteilung]
+# Netzlaufwerk fuer die IT-Abteilung einbinden
+$laufwerk = "Z:"
+$pfad     = "\\DC01\IT"
+
+# Vorhandenes Laufwerk Z: trennen (falls vorhanden)
+if (Test-Path $laufwerk) {
+    net use $laufwerk /delete /yes
+}
+
+# Netzlaufwerk verbinden
+net use $laufwerk $pfad /persistent:no
+
+Write-Host "Laufwerk $laufwerk wurde mit $pfad verbunden."
+\end{lstlisting}
+
+  Erstelle analoge Skripte \texttt{logon\_Buch\allowbreak haltung.ps1}, \texttt{logon\_Vertrieb.ps1} und \texttt{logon\_Personal.ps1} -- jeweils mit dem entsprechenden Freigabepfad (\texttt{\textbackslash\textbackslash DC01\textbackslash Buchhaltung} usw.).
+
+\subsection*{Aufgabe -- Teil B: GPO pro Abteilung erstellen und verknüpfen}
+\begin{enumerate}
+  \item Öffne die \textbf{Gruppenrichtlinienverwaltung} (\textit{Start} $\rightarrow$ \textit{Windows-Verwaltungstools} $\rightarrow$ \textit{Gruppenrichtlinienverwaltung})
+  \item Navigiere zu \textit{bannanenimport.local} $\rightarrow$ \textit{Bananenimport-Fruchticus} $\rightarrow$ \textit{IT}
+  \item Rechtsklick auf die OU \texttt{IT} $\rightarrow$ \textit{Gruppenrichtlinienobjekt hier erstellen und verknüpfen}
+  \item Name: \texttt{GPO\_Logon\_IT}
+  \item Rechtsklick auf \texttt{GPO\_Logon\_IT} $\rightarrow$ \textit{Bearbeiten}
+  \item Im Gruppenrichtlinien-Editor navigiere zu:\\
+        \textit{Benutzerkonfiguration} $\rightarrow$ \textit{Windows-Einstellungen} $\rightarrow$ \textit{Skripts (Anmelden/Abmelden)}
+  \item Doppelklick auf \textit{Anmelden} $\rightarrow$ \textit{Hinzufügen}
+  \item Klicke auf \textit{Dateien anzeigen} -- der SYSVOL-Skriptordner öffnet sich
+  \item Kopiere \texttt{logon\_IT.ps1} in diesen Ordner (falls nicht bereits dort)
+  \item Trage als Skriptname \texttt{logon\_IT.ps1} ein, klicke \textit{OK}
+  \item Wiederhole die Schritte für \texttt{Buchhaltung}, \texttt{Vertrieb} und \texttt{Personal}
+\end{enumerate}
+
+\subsection*{Hinweis: PowerShell-Ausführungsrichtlinie}
+Damit PowerShell-Skripte als Logon-Skript ausgeführt werden dürfen, muss die Ausführungsrichtlinie angepasst werden. Dies kann ebenfalls per GPO erzwungen werden:
+
+\textit{Computerkonfiguration} $\rightarrow$ \textit{Administrative Vorlagen} $\rightarrow$ \textit{Windows-Komponenten} $\rightarrow$ \textit{Windows PowerShell} $\rightarrow$ \textit{Skriptausführung aktivieren} $\rightarrow$ \textit{Allen Skripten erlauben}
+
+\newpage
+\section{Aufgabe 7: Windows-Client-VM erstellen und der Domain beitreten}
+
+\subsection*{Ziel}
+Ein Windows-Client (\texttt{CLIENT01}) wird als zweite VM in Proxmox angelegt, konfiguriert und der Domain \texttt{bannanenimport.local} beigetreten. Anschließend wird die gesamte Umgebung getestet.
+
+\subsection*{Aufgabe -- Teil A: VM anlegen}
+\begin{enumerate}
+  \item Klicke im Proxmox-Webinterface auf \textit{VM erstellen}
+  \item Konfiguriere die VM:
+  \begin{itemize}
+    \item \textbf{Allgemein}: Name \texttt{CLIENT01}, VM-ID z.\,B.\ \texttt{101}
+    \item \textbf{OS}: Windows-10- oder Windows-11-ISO, Typ \texttt{Microsoft Windows}
+    \item \textbf{System}: \texttt{OVMF (UEFI)}, \texttt{q35}
+    \item \textbf{Festplatte}: 50\,GB, \texttt{VirtIO SCSI}
+    \item \textbf{CPU}: 2 Kerne, Typ \texttt{host}
+    \item \textbf{Speicher}: 4096\,MiB
+    \item \textbf{Netzwerk}: Bridge \texttt{vmbr1}, Modell \texttt{VirtIO}
+  \end{itemize}
+  \item VM starten, Windows installieren
+  \item Computername auf \texttt{CLIENT01} setzen und neu starten
+\end{enumerate}
+
+\subsection*{Aufgabe -- Teil B: Netzwerk überprüfen}
+\begin{enumerate}
+  \item Öffne die Eingabeaufforderung und prüfe die IP-Konfiguration:
+  \begin{itemize}
+    \item \texttt{ipconfig /all} -- der Client sollte eine IP aus dem DHCP-Bereich\\ (\texttt{192.168.100.50--150}) bekommen haben, DNS sollte \texttt{192.168.100.1} sein
+  \end{itemize}
+  \item Teste die Verbindung zum DC:
+  \begin{itemize}
+    \item \texttt{ping 192.168.100.1} -- muss erfolgreich sein
+    \item \texttt{ping DC01.bannanenimport.local} -- muss DNS auflösen und antworten
+  \end{itemize}
+\end{enumerate}
+
+\subsection*{Aufgabe -- Teil C: Domain beitreten}
+\begin{enumerate}
+  \item Öffne \textit{Systemsteuerung} $\rightarrow$ \textit{System} $\rightarrow$ \textit{Einstellungen für Computername, Domäne und Arbeitsgruppe}
+  \item Klicke auf \textit{Ändern}
+  \item Wähle \textit{Domäne}, trage \texttt{bannanenimport.local} ein
+  \item Bestätige mit den Anmeldedaten des Domain-Administrators (\texttt{Administrator} + Passwort)
+  \item Nach Bestätigung neu starten
+\end{enumerate}
+
+\subsection*{Aufgabe -- Teil D: Domainbenutzer testen}
+\begin{enumerate}
+  \item Melde dich am Client mit einem Domainbenutzerkonto an, z.\,B.:
+  \begin{itemize}
+    \item Benutzername: \texttt{BANANENIMPORT\textbackslash aberger} (oder nur \texttt{aberger@bannanenimport.local})
+    \item Passwort: das bei der Erstellung vergebene Passwort
+  \end{itemize}
+  \item Überprüfe nach dem Login:
+  \begin{itemize}
+    \item Ist Laufwerk \texttt{Z:} eingebunden? $\rightarrow$ Datei-Explorer öffnen
+    \item Zeigt \texttt{Z:} den richtigen Netzwerkpfad (\texttt{\textbackslash\textbackslash DC01\textbackslash IT})?
+    \item Kann eine Testdatei im Abteilungsordner erstellt werden?
+    \item Kann ein Benutzer einer anderen Abteilung \textbf{nicht} auf diesen Ordner zugreifen?
+  \end{itemize}
+\end{enumerate}
+
+
+
+\chapter{Hilfestellung und Implementierungshinweise}
+
+
+\section{Windows-Client per PowerShell der Domain hinzufügen}
+Auf dem Client kann der Domain-Beitritt ebenfalls über die PowerShell erfolgen:
+
+\begin{lstlisting}[language=sh, caption=Domain-Beitritt per PowerShell]
+$cred = Get-Credential -UserName "BANANENIMPORT\Administrator" `
+    -Message "Domain-Administrator-Passwort eingeben"
+
+Add-Computer `
+    -DomainName "bannanenimport.local" `
+    -Credential $cred `
+    -NewName    "CLIENT01" `
+    -Restart
+\end{lstlisting}
+
+\section{Netzwerkdiagramm und Datenfluss beim Login}
+
+Beim Anmelden eines Domainbenutzers laufen folgende Schritte ab:
+\begin{enumerate}
+  \item Der Client sendet eine \textbf{Kerberos AS-REQ} an den DC (\texttt{192.168.100.1})
+  \item Der DC prüft die Anmeldedaten in der AD-Datenbank und stellt ein \textbf{Ticket Granting Ticket (TGT)} aus
+  \item Das Betriebssystem verarbeitet die verknüpften \textbf{GPOs} für den Benutzer und den Computer
+  \item Das \textbf{Logon-Skript} wird ausgeführt: Laufwerk \texttt{Z:} wird gemappt
+  \item Der Benutzer ist angemeldet und hat Zugriff auf seinen Abteilungsordner
+\end{enumerate}
+
+\newpage
+\section{Häufige Fehlerquellen}
+
+\subsection*{DNS falsch konfiguriert}
+Active Directory ist extrem DNS-abhängig. Der häufigste Fehler ist, dass der Windows-Client den falschen DNS-Server eingetragen hat. Sicherstellen:
+\begin{itemize}
+  \item DNS auf dem Client (per DHCP oder manuell): \texttt{192.168.100.1}
+  \item Test: \texttt{nslookup bannanenimport.local} muss \texttt{192.168.100.1} zurückgeben
+  \item Test: \texttt{nslookup DC01.bannanenimport.local} muss \texttt{192.168.100.1} zurückgeben
+\end{itemize}
+
+\subsection*{Kerberos-Zeitdifferenz}
+Kerberos toleriert maximal \textbf{5 Minuten} Zeitdifferenz zwischen Client und DC. Ist die Uhr eines Clients falsch gestellt, schlägt die Anmeldung mit einem kryptischen Fehler fehl. Lösung:
+\begin{itemize}
+  \item Sicherstellen, dass DC und Client dieselbe Zeitzone und eine synchronisierte Uhrzeit haben
+  \item Im isolierten Lab ohne Internet: Auf dem DC einen internen NTP-Dienst konfigurieren oder Zeit manuell angleichen
+\end{itemize}
+
+\subsection*{Logon-Skript wird nicht ausgeführt}
+\begin{itemize}
+  \item PowerShell-Ausführungsrichtlinie prüfen (muss per GPO auf \textit{RemoteSigned} oder \textit{Unrestricted} gesetzt sein)
+  \item Skriptpfad in der GPO exakt prüfen -- Groß-/Kleinschreibung beachten
+  \item GPO-Verknüpfung prüfen: Ist die GPO mit der richtigen OU verknüpft?
+  \item Mit \texttt{gpresult /r} auf dem Client überprüfen, welche GPOs angewendet wurden
+  \item GPO-Verarbeitung erzwingen: \texttt{gpupdate /force}
+\end{itemize}
+
+\subsection*{Domain-Beitritt schlägt fehl}
+\begin{itemize}
+  \item Ping zum DC (\texttt{192.168.100.1}) muss funktionieren
+  \item DNS muss korrekt aufgelöst werden (\texttt{nslookup bannanenimport.local})
+  \item Administratorpasswort korrekt?
+  \item Windows-Firewall auf dem DC: \textit{Datei- und Druckerfreigabe} muss aktiviert sein\\
+        (\textit{Systemsteuerung} $\rightarrow$ \textit{Windows Defender Firewall} $\rightarrow$ \textit{App durch Firewall zulassen})
+\end{itemize}
+
+\section{Gruppenrichtlinien -- Bonusaufgaben}
+
+Wer die Grundaufgaben fertiggestellt hat, kann folgende zusätzliche GPOs konfigurieren:
+
+\textbf{Passwortrichtlinie für die Domain:}
+\begin{itemize}
+  \item Gruppenrichtlinienverwaltung $\rightarrow$ \textit{Default Domain Policy} $\rightarrow$ Bearbeiten
+  \item \textit{Computerkonfiguration} $\rightarrow$ \textit{Windows-Einstellungen} $\rightarrow$ \textit{Sicherheitseinstellungen} $\rightarrow$ \textit{Kontorichtlinien} $\rightarrow$ \textit{Kennwortrichtlinien}
+  \item Empfehlung: Mindestlänge 10 Zeichen, Komplexitätsanforderungen aktiviert, maximales Kennwortalter 90 Tage
+\end{itemize}
+
+\textbf{Sperrbildschirm-Timeout:}
+\begin{itemize}
+  \item Neue GPO auf OU-Ebene oder Domain-Ebene anlegen
+  \item \textit{Benutzerkonfiguration} $\rightarrow$ \textit{Administrative Vorlagen} $\rightarrow$ \textit{Systemsteuerung} $\rightarrow$ \textit{Anpassung} $\rightarrow$ \textit{Kennwortgeschützten Bildschirmschoner aktivieren} und \textit{Wartezeit für den Bildschirmschoner festlegen} (z.\,B.\ 10 Minuten)
+\end{itemize}
+
+\textbf{Softwareverteilung (MSI-Pakete):}
+\begin{itemize}
+  \item \textit{Computerkonfiguration} $\rightarrow$ \textit{Software-Einstellungen} $\rightarrow$ \textit{Softwareinstallation}
+  \item MSI-Datei auf einer Netzwerkfreigabe ablegen und per GPO zuweisen -- wird beim nächsten Computerstart automatisch installiert
+\end{itemize}
+
+\textbf{USB-Zugriff sperren (z.\,B.\ für Buchhaltung):}
+\begin{itemize}
+  \item GPO auf OU \texttt{Buchhaltung} anwenden
+  \item \textit{Computerkonfiguration} $\rightarrow$ \textit{Administrative Vorlagen} $\rightarrow$ \textit{System} $\rightarrow$ \textit{Wechseldatenträgerzugriff} $\rightarrow$ \textit{Alle Wechseldatenträgerklassen: Jeglichen Zugriff verweigern}
+\end{itemize}
+
+\newpage
+
+\section{Empfohlene Reihenfolge und Snapshot-Strategie}
+
+Für eine stabile Laborumgebung empfiehlt sich folgende Vorgehensweise:
+
+\begin{center}
+\begin{tabular}{|c|l|l|}
+\hline
+\textbf{Schritt} & \textbf{Aufgabe} & \textbf{Snapshot-Name} \\
+\hline
+1 & vmbr1 in Proxmox angelegt & -- \\
+2 & DC01 VM erstellt, noch leer & \texttt{dc01-leer} \\
+3 & Windows Server installiert, Computername gesetzt & \texttt{dc01-winserver-basis} \\
+4 & DC-Promote abgeschlossen & \texttt{dc01-dc-fertig} \\
+5 & DHCP konfiguriert & \texttt{dc01-dhcp-fertig} \\
+6 & OUs, Gruppen, Benutzer angelegt & \texttt{dc01-ad-objekte} \\
+7 & Shares und Berechtigungen gesetzt & \texttt{dc01-shares-fertig} \\
+8 & GPOs und Logon-Skripte konfiguriert & \texttt{dc01-gpo-fertig} \\
+9 & CLIENT01 VM erstellt, noch leer & \texttt{client01-leer} \\
+10 & Windows installiert, Domain-Beitritt & \texttt{client01-domain-beigetreten} \\
+\hline
+\end{tabular}
+\end{center}
+
+Mit dieser Snapshot-Strategie kann jederzeit zu einem sauberen Zustand zurückgekehrt werden, ohne die gesamte Umgebung neu aufbauen zu müssen.
+
+
+\end{document}
