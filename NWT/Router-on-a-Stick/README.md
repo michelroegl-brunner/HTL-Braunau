@@ -92,14 +92,6 @@ Jede Gruppe arbeitet mit derselben Standard-Topologie:
 <figcaption>Topologie fuer die Router-on-a-Stick-Uebung</figcaption>
 </figure>
 
-Adressregel:
-
-- PC: `.1`
-
-- Switch-SVI: `.253`
-
-- Router-Subinterface (Gateway): `.254`
-
 # IP-Plan
 
 ## Adressierungstabelle
