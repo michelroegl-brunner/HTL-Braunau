@@ -334,7 +334,7 @@ Vergiss nicht in dein Home-Verzeichniss zu wechslen. `cd  `
 
 2.  Gib den String `Hello, world!` in der Shell aus.
 
-3.  Prüfe mit `man`, wie `echo` offiziell beschrieben wird.
+3.  Prüfe mit `help`, wie `echo` offiziell beschrieben wird.
 
 4.  Gib die Strings `fee`, `fie`, `fö` und `fum` aus und nutze dabei die
     Befehls-Historie mit den Pfeiltasten.
